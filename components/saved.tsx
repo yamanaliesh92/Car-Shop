@@ -40,11 +40,18 @@ const Saved = () => {
   };
 
   return (
-    <div className="home__cars-wrapper mb-2">
-      {cart.cartItem.map((item) => {
-        return <CarCard car={item} deleteCar={deleteCar} key={item.id} />;
-      })}
-    </div>
+    <>
+      <div className="home__cars-wrapper mb-2">
+        {cart.cartItem.map((item) => {
+          return <CarCard car={item} deleteCar={deleteCar} key={item.id} />;
+        })}
+      </div>
+      {cart.cartItem.length === 0 && (
+        <h1 className="text-center text-2xl text-red-400">
+          you are didn't add any car to your favorite{" "}
+        </h1>
+      )}
+    </>
   );
 };
 
