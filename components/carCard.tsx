@@ -74,6 +74,7 @@ const CarCard: FC<IProps> = ({ car, deleteCar }) => {
               onClick={() => changeUpdate(car.id)}
               title="update"
             />
+            conditional
             <MdDelete
               cursor="pointer"
               onClick={() => deleteCar(car.id)}
