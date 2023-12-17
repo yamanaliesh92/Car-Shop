@@ -10,8 +10,10 @@ interface ICart {
 }
 
 const cartFromLocalStorage: IResponseCars[] =
-  typeof window !== undefined && localStorage.getItem("cartItem")
-    ? JSON.parse(localStorage.getItem("cartItem")!)
+  typeof window !== undefined &&
+  window &&
+  window.localStorage.getItem("cartItem")
+    ? JSON.parse(window.localStorage.getItem("cartItem")!)
     : [];
 
 const init: ICart = {
@@ -33,7 +35,9 @@ const cart = createSlice({
         state.cartItem.push(newItem);
       }
 
-      localStorage.setItem("cartItem", JSON.stringify(state.cartItem));
+      if (window && typeof window !== "undefined") {
+        window.localStorage.setItem("cartItem", JSON.stringify(state.cartItem));
+      }
       // return {
       //   ...state,
       //   cartItem: [...state.cartItem, newItem],
@@ -43,7 +47,9 @@ const cart = createSlice({
       const id = action.payload.id;
       const updateState = state.cartItem.filter((item) => item.id !== id);
       state.cartItem.splice(0, state.cartItem.length, ...updateState);
-      localStorage.setItem("cartItem", JSON.stringify(state.cartItem));
+      if (window && typeof window !== "undefined") {
+        localStorage.setItem("cartItem", JSON.stringify(state.cartItem));
+      }
     },
   },
 });

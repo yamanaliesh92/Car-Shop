@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 
 import React, { Suspense } from "react";
+
 const ChangePassword = dynamic(() => import("@/components/change-password"));
 
 export default function page() {

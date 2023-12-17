@@ -38,7 +38,7 @@ const CarCard: FC<IProps> = ({ car, deleteCar }) => {
     queryFn: getAllUserApi,
   });
 
-  console.log("dataUser", { dataUser });
+  console.log("dataUser", dataUser);
   const [open, setOpen] = useState({ id: 0, edit: false });
 
   const [edit, setEdit] = useState({ idEdit: 0, update: false });
@@ -80,9 +80,20 @@ const CarCard: FC<IProps> = ({ car, deleteCar }) => {
           onClick={addCart}
         />
 
-        {dataUser?.dataUser?.map((item) => (
-          <div>
-            <div>{item.username} </div>
+        {dataUser?.data?.map((items) => (
+          <div className="fle flex flex-col">
+            {car.userId === items.id && (
+              <>
+                <div className="fle flex items-center my-2">
+                  <h1>the owner:</h1>
+                  <h1 className="font-bold text-red-400">{items.username} </h1>
+                </div>
+                <div className="fle flex items-center my-2">
+                  <h1>the owner number:</h1>
+                  <h1 className="font-bold text-red-400">{items.number} </h1>
+                </div>
+              </>
+            )}
           </div>
         ))}
       </div>
