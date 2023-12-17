@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import React from "react";
+
 const CreateCategory = dynamic(() => import("@/components/createCategory"));
 
 export default function PageCreateCar() {
