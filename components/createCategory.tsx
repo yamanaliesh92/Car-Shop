@@ -34,12 +34,12 @@ const init: IPayloadCar = {
 interface IProps {
   closeModal: Dispatch<SetStateAction<boolean>>;
 }
-const CreateCategory: FC<IProps> = ({ closeModal }) => {
+const CreateCategory = () => {
   const [element, setElement] = useState<string>("");
 
-  const close = () => {
-    closeModal((prev) => !prev);
-  };
+  // const close = () => {
+  // //   closeModal((prev) => !prev);
+  // // };
 
   const [elementInput, setElementInput] = useState<IPayloadCar>(init);
   const [openNextForm, setOpenNextForm] = useState(false);
@@ -131,9 +131,7 @@ const CreateCategory: FC<IProps> = ({ closeModal }) => {
       data-cy="createForm"
       className="p-4 w-[500px] relative bg-blue-300 h-[350px] rounded-md"
     >
-      <div onClick={close} className="s flex justify-end">
-        X
-      </div>
+      <div className="s flex justify-end">X</div>
       <form className="flex flex-col p-2 items-center" onSubmit={onSubmit}>
         <h1
           data-cy="title"

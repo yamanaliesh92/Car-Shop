@@ -171,7 +171,7 @@ const NavBar = () => {
 
       {openCreateCar && (
         <div className="w-full fixed h-[70%] flex items-center justify-center top-1 p-[6px]">
-          <CreateCategory closeModal={setOpenCreateCar} />
+          <CreateCategory />
         </div>
       )}
     </header>
