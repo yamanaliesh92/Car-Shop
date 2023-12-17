@@ -6,6 +6,8 @@ export default function ScrollToTop() {
   const [visible, setVisible] = useState(false);
 
   const scrollToTops = () => {
+    if (typeof window === "undefined") return;
+
     window.scroll({
       top: 0,
       behavior: "smooth",
@@ -13,6 +15,8 @@ export default function ScrollToTop() {
   };
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     const toggleVisibility = () => {
       if (window.scrollY > 300) {
         setVisible(true);
@@ -23,10 +27,8 @@ export default function ScrollToTop() {
 
     window.addEventListener("scroll", toggleVisibility);
 
-    // return () => window.removeEventListener("scroll", toggleVisibility);
+    return () => window.removeEventListener("scroll", toggleVisibility);
   }, []);
-
-  console.log("eddd", window.scroll);
 
   return (
     <div className="fixed z-10 right-3 top-[6.6rem]">
