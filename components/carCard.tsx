@@ -19,6 +19,8 @@ import {
   MdOutlineSystemSecurityUpdate,
 } from "react-icons/md";
 import { toast } from "react-hot-toast";
+import { ResponseCreateUser } from "@/axios/user/create_user.api";
+import { meApi } from "@/axios/user/Me.api";
 
 interface IProps {
   car: IResponseCars;
@@ -36,6 +38,11 @@ const CarCard: FC<IProps> = ({ car, deleteCar }) => {
   const { data: dataUser } = useQuery<ResponseUser>({
     queryKey: ["allUser"],
     queryFn: getAllUserApi,
+  });
+
+  const { data: dateMe } = useQuery<ResponseCreateUser>({
+    queryKey: ["me"],
+    queryFn: meApi,
   });
 
   console.log("dataUser", dataUser);
@@ -58,44 +65,30 @@ const CarCard: FC<IProps> = ({ car, deleteCar }) => {
       <div className="car-card__content">
         <h2 className="car-card__content-title">{car.name}</h2>
         {/* <BsSaveFill size={30} onClick={addCart} title="add to cart" /> */}
-        <div className="flex items-center">
-          <MdOutlineSystemSecurityUpdate
-            size={25}
-            cursor="pointer"
-            className="mr-2"
-            onClick={() => changeUpdate(car.id)}
-            title="update"
-          />
-          <MdDelete
-            cursor="pointer"
-            onClick={() => deleteCar(car.id)}
-            size={25}
-            title="deleteCar"
-          />
-        </div>
+        {dateMe && dateMe.id === car.userId && (
+          <div className="flex items-center">
+            <MdOutlineSystemSecurityUpdate
+              size={25}
+              cursor="pointer"
+              className="mr-2"
+              onClick={() => changeUpdate(car.id)}
+              title="update"
+            />
+            conditional
+            <MdDelete
+              cursor="pointer"
+              onClick={() => deleteCar(car.id)}
+              size={25}
+              title="deleteCar"
+            />
+          </div>
+        )}
         <MdAddBox
           size={25}
           cursor="pointer"
           title="addToCart"
           onClick={addCart}
         />
-
-        {dataUser?.data?.map((items) => (
-          <div className="fle flex flex-col">
-            {car.userId === items.id && (
-              <>
-                <div className="fle flex items-center my-2">
-                  <h1>the owner:</h1>
-                  <h1 className="font-bold text-red-400">{items.username} </h1>
-                </div>
-                <div className="fle flex items-center my-2">
-                  <h1>the owner number:</h1>
-                  <h1 className="font-bold text-red-400">{items.number} </h1>
-                </div>
-              </>
-            )}
-          </div>
-        ))}
       </div>
 
       <div className="flex justify-between items-center w-full">
@@ -111,11 +104,28 @@ const CarCard: FC<IProps> = ({ car, deleteCar }) => {
         <p className="text-2xl text-red-400 font-bold">{car.sell}</p>
       </div>
 
+      {dataUser?.data?.map((items) => (
+        <div className="fle flex flex-col">
+          {car.userId === items.id && (
+            <>
+              <div className="fle flex items-center my-2">
+                <h1>the owner:</h1>
+                <h1 className="font-bold text-red-400">{items.username} </h1>
+              </div>
+              <div className="fle flex items-center my-2">
+                <h1>the owner number:</h1>
+                <h1 className="font-bold text-red-400">{items.number} </h1>
+              </div>
+            </>
+          )}
+        </div>
+      ))}
+
       <div className="relative w-full h-40 my-3 object-contain">
         <img src={car.img} alt="car model" className="object-contain" />
       </div>
 
-      <div className="relative flex w-full mt-2">
+      <div className="relative flex w-full my-2">
         <div className="flex group-hover:invisible w-full justify-between text-grey">
           <div className="flex flex-col justify-center items-center gap-2">
             <img
@@ -134,16 +144,6 @@ const CarCard: FC<IProps> = ({ car, deleteCar }) => {
             <img src="/gas.svg" width={20} height={20} alt="seat" />
             <p className="car-card__icon-text">{car.type}</p>
           </div>
-        </div>
-
-        <div className="car-card__btn-container">
-          <CustomButton
-            title="View More"
-            containerStyle="w-full py-[16px] rounded-full bg-primary-blue"
-            textStyles="text-white text-[14px] leading-[17px] font-bold"
-            rightIcon="/right-arrow.svg"
-            handleClick={() => changeOpen(car.id)}
-          />
         </div>
       </div>
 

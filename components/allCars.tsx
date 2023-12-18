@@ -8,6 +8,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import CarCard from "./carCard";
 import { deleteCarApi } from "@/axios/car/deleteCar.api";
+import { meApi } from "@/axios/user/Me.api";
+import { ResponseCreateUser } from "@/axios/user/create_user.api";
 
 export default function AllCars() {
   const client = useQueryClient();
@@ -15,6 +17,13 @@ export default function AllCars() {
     queryKey: ["allCar"],
     queryFn: allCarApi,
   });
+
+  const { data: dateMe } = useQuery<ResponseCreateUser>({
+    queryKey: ["me"],
+    queryFn: meApi,
+  });
+
+  console.log("dateme", dateMe);
 
   const { mutateAsync } = useMutation({
     mutationFn: deleteCarApi,
