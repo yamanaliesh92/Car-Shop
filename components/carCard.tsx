@@ -153,11 +153,11 @@ const CarCard: FC<IProps> = ({ car, deleteCar }) => {
         </>
       ) : null}
 
-      {edit.update && car.id === edit.idEdit ? (
+      {edit.update && car.id === edit.idEdit && (
         <>
-          <UpdateCategory closeModal={setOpen} car={car} />
+          <UpdateCategory closeModal={setEdit} car={car} />
         </>
-      ) : null}
+      )}
     </div>
   );
 };

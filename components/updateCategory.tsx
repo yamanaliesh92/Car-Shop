@@ -5,12 +5,14 @@ import { IUpdateCar, UpdateCarApi } from "@/axios/car/updateCar.api";
 import { HiPhotograph } from "react-icons/hi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { ChangeEvent, FC, useRef, useState } from "react";
+import { UpdateImgCarApi } from "@/axios/car/update.img.api";
+import { toast } from "react-hot-toast";
 
 interface IProps {
   closeModal: React.Dispatch<
     React.SetStateAction<{
-      id: number;
-      edit: boolean;
+      idEdit: number;
+      update: boolean;
     }>
   >;
   car: IResponseCars;
@@ -39,9 +41,11 @@ const UpdateCategory: FC<IProps> = ({ car, closeModal }) => {
   const client = useQueryClient();
   const [element, setElement] = useState<IUpdateCar>(init);
   const [file, setFile] = useState<File | null>(null);
+  const [open, setOpen] = useState(false);
 
   const close = () => {
-    closeModal((prev) => ({ id: 0, edit: !prev.edit }));
+    console.log("updatesddddddd");
+    closeModal((prev) => ({ idEdit: 0, update: false }));
   };
 
   const onChangeFile = (e: ChangeEvent<HTMLInputElement>) => {
@@ -52,19 +56,32 @@ const UpdateCategory: FC<IProps> = ({ car, closeModal }) => {
     setFile(value);
   };
 
+  const openImg = () => {
+    setOpen((prev) => !prev);
+    inputRef.current?.click();
+  };
+
   const { mutateAsync } = useMutation({
     mutationFn: UpdateCarApi,
     onSuccess: () => {
       client.invalidateQueries({ queryKey: ["allCar"] });
+      {
+        !open && close();
+      }
+    },
+  });
+
+  const { mutateAsync: mutateAsyncImg } = useMutation({
+    mutationFn: UpdateImgCarApi,
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: ["allCar"] });
       close();
+      toast("update is doen");
     },
   });
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file) {
-      return;
-    }
 
     const body: IUpdateCar = {
       carColor: element.carColor,
@@ -80,6 +97,16 @@ const UpdateCategory: FC<IProps> = ({ car, closeModal }) => {
     };
 
     await mutateAsync({ id: car.id, payload: body });
+
+    const form = new FormData();
+    if (!file) {
+      return;
+    }
+    form.append("img", file);
+
+    {
+      open && (await mutateAsyncImg({ id: car.id, img: form as any }));
+    }
   };
 
   const onChange = (
@@ -106,7 +133,7 @@ const UpdateCategory: FC<IProps> = ({ car, closeModal }) => {
 
   return (
     <div className="fixed w-full flex items-center justify-center h-full bg-yellow-600 z-40 inset-0 bg-opacity-25">
-      <div className="w-[450px] shadow-xl transition-all ease-in-out duration-100 h-[390px] flex items-start flex-col p-2  overflow-y-auto bg-white rounded-md">
+      <div className="w-[450px] shadow-xl transition-all ease-in-out duration-100 h-[450px] flex items-start flex-col p-2  overflow-y-auto bg-white rounded-md">
         <div onClick={close} className="self-end p-3 cursor-pointer">
           X
         </div>
@@ -193,19 +220,16 @@ const UpdateCategory: FC<IProps> = ({ car, closeModal }) => {
             className="p-2 bg-white hidden rounded-md focus:outline-none"
             placeholder="jdj"
           />
-          <div
-            className="flex items-center"
-            data-cy="img"
-            onClick={() => inputRef.current?.click()}
-          >
-            <h1 data-cy="pictures" className="font-bold mr-2">
-              add car pictures
+          <div className="flex items-center" data-cy="img" onClick={openImg}>
+            <h1 data-cy="pictures" className="mr-2">
+              to change img click here
             </h1>
             <HiPhotograph size={"30"} />
           </div>
           <div className="w-full mt-2 grid grid-cols-2 gap-3">
             <button
               onClick={close}
+              type={"button"}
               className="w-[65px] self-center  h-[45px] p-2 cursor-pointer rounded-md text-white bg-blue-400"
             >
               cancel
