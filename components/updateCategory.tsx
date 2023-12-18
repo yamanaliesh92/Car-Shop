@@ -143,13 +143,13 @@ const UpdateCategory: FC<IProps> = ({ car, closeModal }) => {
               placeholder="name of car"
               value={element.name}
               onChange={(e) => onChange(e, "name", false)}
-              className="p-2 bg-blue-300 rounded-md focus:outline-none"
+              className="p-2 bg-gray-300 rounded-md focus:outline-none"
             />
             <input
               value={element.make}
               onChange={(e) => onChange(e, "make", false)}
               placeholder="make of car"
-              className="p-2  bg-blue-300 rounded-md focus:outline-none"
+              className="p-2  bg-gray-300 rounded-md focus:outline-none"
             />
           </div>
           <div className="w-full mt-2 grid grid-cols-2 gap-3">
@@ -158,14 +158,14 @@ const UpdateCategory: FC<IProps> = ({ car, closeModal }) => {
               value={element.cylinders}
               type={"number"}
               onChange={(e) => onChange(e, "cylinders", true)}
-              className="p-2 bg-blue-300 rounded-md focus:outline-none"
+              className="p-2 bg-gray-300 rounded-md focus:outline-none"
             />
             <input
               placeholder="year of car"
               value={element.year}
               type={"number"}
               onChange={(e) => onChange(e, "year", true)}
-              className="p-2  bg-blue-300 rounded-md focus:outline-none"
+              className="p-2  bg-gray-300 rounded-md focus:outline-none"
             />
           </div>
 
@@ -174,13 +174,13 @@ const UpdateCategory: FC<IProps> = ({ car, closeModal }) => {
               placeholder="type of car"
               value={element.type}
               onChange={(e) => onChange(e, "type", false)}
-              className="p-2  bg-blue-300 rounded-md focus:outline-none"
+              className="p-2  bg-gray-300 rounded-md focus:outline-none"
             />
             <input
               placeholder="transmission of car"
               value={element.transmission}
               onChange={(e) => onChange(e, "transmission", false)}
-              className="p-2  bg-blue-300 rounded-md focus:outline-none"
+              className="p-2  bg-gray-300 rounded-md focus:outline-none"
             />
           </div>
           <div className="w-full mt-2 grid grid-cols-2 gap-3">
@@ -189,13 +189,13 @@ const UpdateCategory: FC<IProps> = ({ car, closeModal }) => {
               value={element.price}
               type={"number"}
               onChange={(e) => onChange(e, "price", true)}
-              className="p-2 bg-blue-300 rounded-md focus:outline-none"
+              className="p-2 bg-gray-300 rounded-md focus:outline-none"
             />
             <input
               placeholder="model of car"
               value={element.carColor}
               onChange={(e) => onChange(e, "carColor", false)}
-              className="p-2  bg-blue-300 rounded-md focus:outline-none"
+              className="p-2  bg-gray-300 rounded-md focus:outline-none"
             />
           </div>
           <div className="w-full mt-2 grid grid-cols-2 gap-3">
@@ -203,13 +203,13 @@ const UpdateCategory: FC<IProps> = ({ car, closeModal }) => {
               placeholder="name of car"
               value={element.sell}
               onChange={(e) => onChange(e, "sell", false)}
-              className="p-2  bg-blue-300 rounded-md focus:outline-none"
+              className="p-2  bg-gray-300 rounded-md focus:outline-none"
             />
             <input
               placeholder="model of car"
               value={element.category}
               onChange={(e) => onChange(e, "category", false)}
-              className="p-2 bg-blue-300 rounded-md focus:outline-none"
+              className="p-2 bg-gray-300 rounded-md focus:outline-none"
             />
           </div>
 
@@ -230,11 +230,11 @@ const UpdateCategory: FC<IProps> = ({ car, closeModal }) => {
             <button
               onClick={close}
               type={"button"}
-              className="w-[65px] self-center  h-[45px] p-2 cursor-pointer rounded-md text-white bg-blue-400"
+              className="w-[65px] self-center  h-[45px] p-2 cursor-pointer rounded-md text-white bg-gray-400"
             >
               cancel
             </button>
-            <button className="w-[65px] self-center h-[45px] p-2 cursor-pointer rounded-md text-white bg-blue-400">
+            <button className="w-[65px] self-center h-[45px] p-2 cursor-pointer rounded-md text-white bg-gray-400">
               update
             </button>
           </div>
