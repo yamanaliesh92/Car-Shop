@@ -14,12 +14,10 @@ import { BsFillSunFill } from "react-icons/bs";
 
 import { GiHamburgerMenu } from "react-icons/gi";
 import { BsXLg } from "react-icons/bs";
-import dynamic from "next/dynamic";
-
-const CreateCategory = dynamic(() => import("./createCategory"), {
-  ssr: false,
-  loading: () => <h1>lodainge</h1>,
-});
+import { useQuery } from "@tanstack/react-query";
+import CreateCategory from "./createCategory";
+import { ResponseCreateUser } from "@/axios/user/create_user.api";
+import { meApi } from "@/axios/user/Me.api";
 
 const NavBar = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -28,10 +26,13 @@ const NavBar = () => {
   const [openBurger, setOpenBurger] = useState(false);
 
   const mode = useSelector((state: any) => state.theme.mode);
-  2;
 
   const cart = useSelector((state: any) => state.cart.cartItem);
 
+  const { data: dateMe } = useQuery<ResponseCreateUser>({
+    queryKey: ["me"],
+    queryFn: meApi,
+  });
   {
     mode === true
       ? document.documentElement.classList.add("dark")
@@ -92,31 +93,38 @@ const NavBar = () => {
               containerStyle="text-primary-blue rounded-full bg-white min-w-[130px]"
             />
           </Link>
-
-          <BsCartFill
-            size={20}
-            data-cy="cart"
-            cursor={"pointer"}
-            onClick={changeOpe}
-          />
-          <div className="w-[15px] flex items-center justify-center absolute right-[6.25] top-[-0.25] p-3 h-[15px] rounded-full bg-red-500">
-            {cart.length}
-          </div>
-
-          <Link href={"/dashboard"} data-cy="dashboardButton">
-            <MdSpaceDashboard
-              title="your dashboard"
+          {dateMe && (
+            <BsCartFill
+              size={25}
+              data-cy="cart"
               cursor={"pointer"}
-              size={20}
+              onClick={changeOpe}
             />
-          </Link>
-          <MdCreate
-            size={20}
-            cursor={"pointer"}
-            data-cy={"createButton"}
-            onClick={changeOpenCreateCar}
-            title="createCar"
-          />
+          )}
+          {dateMe && (
+            <div className="w-[10px] flex items-center justify-center absolute top-[-0.3rem] right-[116.2px]  p-3 h-[15px] rounded-full bg-gray-400">
+              {cart.length}
+            </div>
+          )}
+
+          {dateMe && (
+            <Link href={"/dashboard"} data-cy="dashboardButton">
+              <MdSpaceDashboard
+                title="your dashboard"
+                cursor={"pointer"}
+                size={20}
+              />
+            </Link>
+          )}
+          {dateMe && (
+            <MdCreate
+              size={20}
+              cursor={"pointer"}
+              data-cy={"createButton"}
+              onClick={changeOpenCreateCar}
+              title="createCar"
+            />
+          )}
           <button onClick={() => dispatch(toggle())}>
             {mode ? (
               <BsFillSunFill cursor={"pointer"} size={20} />
@@ -130,29 +138,35 @@ const NavBar = () => {
         <div className="w-full h-screen duration-300 transition-all border-t-2 border-t-primary-blue-100 ease-in-out z-30 top-0 right-0 light:bg-transparent dark:text-white/80 dark:bg-black flex  justify-center">
           <div className="fe flex mt-5 p-3 flex-col items-center gap-4">
             <div className="re relative">
-              <BsCartFill
-                size={20}
-                data-cy="cart"
-                cursor={"pointer"}
-                onClick={changeOpe}
-              />
+              {dateMe && (
+                <BsCartFill
+                  size={20}
+                  data-cy="cart"
+                  cursor={"pointer"}
+                  onClick={changeOpe}
+                />
+              )}
               <div className="w-[20px] h-[20px] rounded-full bg-red-500"></div>
             </div>
-            <Link href={"/dashboard"} data-cy="dashboardButton">
-              <MdSpaceDashboard
-                onClick={() => setOpenBurger(false)}
-                title="your dashboard"
-                cursor={"pointer"}
+            {dateMe && (
+              <Link href={"/dashboard"} data-cy="dashboardButton">
+                <MdSpaceDashboard
+                  onClick={() => setOpenBurger(false)}
+                  title="your dashboard"
+                  cursor={"pointer"}
+                  size={20}
+                />
+              </Link>
+            )}
+            {dateMe && (
+              <MdCreate
                 size={20}
+                cursor={"pointer"}
+                data-cy={"createButton"}
+                onClick={changeOpenCreateCar}
+                title="createCar"
               />
-            </Link>
-            <MdCreate
-              size={20}
-              cursor={"pointer"}
-              data-cy={"createButton"}
-              onClick={changeOpenCreateCar}
-              title="createCar"
-            />
+            )}
             <button onClick={() => dispatch(toggle())}>
               {mode ? (
                 <BsFillSunFill cursor={"pointer"} size={20} />
