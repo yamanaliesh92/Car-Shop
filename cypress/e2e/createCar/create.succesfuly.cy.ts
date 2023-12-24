@@ -1,6 +1,10 @@
-describe("is done", () => {
-  it("u", () => {
+const token =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDEsImlhdCI6MTcwMzE1MjgyNiwiZXhwIjoxNzAzNzU3NjI2fQ.xk2M24EYzNG9_iWbGH3BaM1JMNnA-3CV_PbiBWLheyk";
+describe("create car", () => {
+  it("create car is done", () => {
     cy.visit("http://localhost:3000/");
+
+    cy.setCookie("MyToken", token);
     cy.get('[data-cy="createButton"]').should("have.text", "create");
 
     cy.get('[data-cy="createForm"]').should("be.hidden");

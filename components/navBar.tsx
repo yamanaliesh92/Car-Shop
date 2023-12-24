@@ -8,7 +8,6 @@ import { MdSpaceDashboard, MdCreate, MdDarkMode } from "react-icons/md";
 
 import Cart from "./cart";
 import { useDispatch, useSelector } from "react-redux";
-import { toggle } from "@/redux/theme";
 
 import { BsFillSunFill } from "react-icons/bs";
 
@@ -18,6 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import CreateCategory from "./createCategory";
 import { ResponseCreateUser } from "@/axios/user/create_user.api";
 import { meApi } from "@/axios/user/Me.api";
+import { toggle } from "@/redux/theme";
 
 const NavBar = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -125,11 +125,11 @@ const NavBar = () => {
               title="createCar"
             />
           )}
-          <button onClick={() => dispatch(toggle())}>
+          <button data-cy="darkModeButton" onClick={() => dispatch(toggle())}>
             {mode ? (
-              <BsFillSunFill cursor={"pointer"} size={20} />
+              <BsFillSunFill data-cy="lightMode" cursor={"pointer"} size={20} />
             ) : (
-              <MdDarkMode cursor={"pointer"} size={20} />
+              <MdDarkMode data-cy="darkMode" cursor={"pointer"} size={20} />
             )}
           </button>
         </div>

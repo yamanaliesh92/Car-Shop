@@ -2,9 +2,9 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 import { Footer, NavBar } from "@/components";
-import Providers from "@/redux/provider";
+
 import ProvidersQuery from "@/query/provider.query";
-import UpdateCategory from "@/components/updateCategory";
+import Providers from "@/redux/provider";
 
 export const metadata: Metadata = {
   title: "Car Hub",

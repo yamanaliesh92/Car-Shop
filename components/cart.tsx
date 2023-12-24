@@ -4,9 +4,10 @@ import { TiDelete } from "react-icons/ti";
 
 import { Dispatch, FC, SetStateAction } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { removeFromCart } from "@/redux/cart";
+
 import { toast } from "react-hot-toast";
 import { IResponseCars } from "@/axios/car/AllCar.api";
+import { removeFromCart } from "@/redux/cart";
 
 interface I {
   cartItem: IResponseCars[];
@@ -24,7 +25,7 @@ const Cart: FC<IProps> = ({ setOpen }) => {
     toast("remove cart is done");
   };
   const cart: I = useSelector((state: any) => state.cart);
-  console.log("cart", cart);
+
   return (
     <div className=" bg-red-50 relative w-[100%] h-[100%] flex flex-col p-4 z-50">
       <div className="flex justify-between border-b p-4">
