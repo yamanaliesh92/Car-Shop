@@ -32,7 +32,7 @@ export default function Sign() {
     });
   };
 
-  const { mutateAsync, error, isSuccess } = useMutation({
+  const { mutateAsync, error, isError } = useMutation({
     mutationFn: createUserApi,
     onSuccess: () => {
       router.push("/login");
@@ -51,8 +51,11 @@ export default function Sign() {
     await mutateAsync(body);
   };
   return (
-    <div className="w-[400px] h-[350px] overflow-hidden">
+    <div className=" w-[250px] sm:w-[400px] h-[350px] overflow-hidden">
       <div className="w-full h-full  rounded-[20px]">
+        {isError && (
+          <h1 className="text-center text-red-300">{error.message}</h1>
+        )}
         <form className="p-4 items-center flex flex-col" onSubmit={onSubmit}>
           <h1
             data-testid="we"

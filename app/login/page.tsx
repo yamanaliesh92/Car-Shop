@@ -1,5 +1,11 @@
 import Login from "@/components/login";
 import React, { Suspense } from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "login",
+  description: "welcome in login page",
+};
 
 export default function page() {
   return (

@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import React, { ChangeEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LoginUserApi } from "@/axios/user/login-user.api";
-import { setCookie } from "@/utils/cookie";
+import { setCookie, setRefreshCookie } from "@/utils/cookie";
 const init: IPayloadLogin = {
   email: "",
   password: "",
@@ -16,14 +16,13 @@ export default function Login() {
 
   const router = useRouter();
 
-  const { mutateAsync, error } = useMutation({
+  const { mutateAsync, isError, error, data } = useMutation({
     mutationFn: LoginUserApi,
     onSuccess: () => {
       router.push("/");
-      // setCookie("MyToken", data as string);
     },
   });
-
+  console.log("dataF", data);
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const body: IPayloadLogin = {
@@ -32,7 +31,8 @@ export default function Login() {
     };
     const data = await mutateAsync(body);
     console.log("data", data);
-    setCookie("MyToken", data.data.accessToken as string);
+    setCookie("MyToken", data?.data?.accessToken as string);
+    setRefreshCookie("MyRefreshToken", data?.data?.refreshToken as string);
   };
 
   // console.log(data, "hetree");
@@ -48,6 +48,7 @@ export default function Login() {
 
   return (
     <div className="p-1 sm:px-10 w-full">
+      {isError && <h1>{error.message}</h1>}
       <h2 data-cy="title" className="font-bold text-2xl text-[#184191]">
         Login
       </h2>
@@ -109,7 +110,3 @@ export default function Login() {
     </div>
   );
 }
-// important and completed is boolean and name=important.tostring() type="date e.target.chckerd/date:E.tragetr.vaklue
-
-// title decriaotoion date completed important
-// "

@@ -1,5 +1,13 @@
 import Sign from "@/components/sign";
+import { Metadata } from "next";
 import React, { Suspense } from "react";
+
+export const metadata: Metadata = {
+  title: {
+    absolute: "sign Up",
+  },
+  description: "welcome in sign page",
+};
 
 export default function page() {
   return (

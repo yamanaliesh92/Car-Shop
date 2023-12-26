@@ -1,11 +1,18 @@
 import AllMyCars from "@/components/myAllCars";
+import { Metadata } from "next";
 
 import React from "react";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    nocache: true,
+  },
+};
 
 const TablePage = () => {
   return (
     <div className="flex items-start dark:bg-black dark:text-white w-full overflow-y-auto overflow-x-auto sm:overflow-x-none ">
-      {/* <Table /> */}
       <AllMyCars />
     </div>
   );

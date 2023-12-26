@@ -1,6 +1,13 @@
-import dynamic from "next/dynamic";
+import Saved from "@/components/saved";
+import { Metadata } from "next";
 import React from "react";
-const Saved = dynamic(() => import("@/components/saved"));
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    nocache: true,
+  },
+};
 
 export default function PageSaved() {
   return (

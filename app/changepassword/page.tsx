@@ -1,8 +1,11 @@
-import dynamic from "next/dynamic";
+import ChangePassword from "@/components/change-password";
+import { Metadata } from "next";
 
 import React, { Suspense } from "react";
 
-const ChangePassword = dynamic(() => import("@/components/change-password"));
+export const metadata: Metadata = {
+  title: "change password",
+};
 
 export default function page() {
   return (

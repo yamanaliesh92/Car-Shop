@@ -1,7 +1,12 @@
-import dynamic from "next/dynamic";
+import CreateCategory from "@/components/createCategory";
+import { Metadata } from "next";
+
 import React from "react";
 
-const CreateCategory = dynamic(() => import("@/components/createCategory"));
+export const metadata: Metadata = {
+  title: "createCar page",
+  description: "welcome in createCar page",
+};
 
 export default function PageCreateCar() {
   return (

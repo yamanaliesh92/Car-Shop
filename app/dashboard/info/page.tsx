@@ -1,6 +1,12 @@
-import dynamic from "next/dynamic";
+import Info from "@/components/info";
+import { Metadata } from "next";
 
-const Info = dynamic(() => import("@/components/info"));
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    nocache: true,
+  },
+};
 
 export default function InfoPage() {
   return (
