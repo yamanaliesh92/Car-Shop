@@ -1,6 +1,7 @@
 "use client";
 import { IPayloadLogin } from "@/types";
 import Link from "next/link";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useMutation } from "@tanstack/react-query";
 import React, { ChangeEvent, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -13,6 +14,7 @@ const init: IPayloadLogin = {
 
 export default function Login() {
   const [element, setElement] = useState<IPayloadLogin>(init);
+  const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
 
@@ -64,24 +66,37 @@ export default function Login() {
           onChange={onChange}
         />
 
-        <div className="relative mt-4">
+        <div className="w-full mt-4 relative">
           <input
             className="sm:w-full p-2  border rounded-xl w-[130px]"
             placeholder="enter your password"
             value={element.password}
             name="password"
             data-cy={"passwordInput"}
-            type={"password"}
+            type={showPassword ? "text" : "password"}
             required
             onChange={onChange}
           />
+          {showPassword ? (
+            <AiOutlineEye
+              size={22}
+              className="absolute right-2 top-[17px] cursor-pointer"
+              onClick={() => setShowPassword((prev) => !prev)}
+            />
+          ) : (
+            <AiOutlineEyeInvisible
+              size={22}
+              className="absolute right-2 top-[17px] cursor-pointer"
+              onClick={() => setShowPassword((prev) => !prev)}
+            />
+          )}
         </div>
 
         <button
           data-cy={"submit"}
           className="mt-4 border-none rounded-xl bg-[#184191] text-white p-2 sm:p-4  w-[130px] sm:w-full"
         >
-          sign
+          Login
         </button>
       </form>
       <div className="grid grid-cols-3 items-center text-gray-500 mt-2">

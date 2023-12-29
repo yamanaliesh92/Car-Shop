@@ -9,12 +9,11 @@ interface ICart {
   cartItem: IResponseCars[];
 }
 
-const cartFromLocalStorage: IResponseCars[] =
-  typeof window !== undefined &&
-  window &&
-  window.localStorage.getItem("cartItem")
-    ? JSON.parse(window.localStorage.getItem("cartItem")!)
-    : [];
+const ls = typeof window !== "undefined" ? window.localStorage : null;
+
+const cartFromLocalStorage: IResponseCars[] = ls?.getItem("cartItem")
+  ? JSON.parse(ls?.getItem("cartItem")!)
+  : [];
 
 const init: ICart = {
   cartItem: cartFromLocalStorage,
@@ -35,9 +34,8 @@ const cart = createSlice({
         state.cartItem.push(newItem);
       }
 
-      if (window && typeof window !== "undefined") {
-        window.localStorage.setItem("cartItem", JSON.stringify(state.cartItem));
-      }
+      ls?.setItem("cartItem", JSON.stringify(state.cartItem));
+
       // return {
       //   ...state,
       //   cartItem: [...state.cartItem, newItem],
@@ -47,9 +45,8 @@ const cart = createSlice({
       const id = action.payload.id;
       const updateState = state.cartItem.filter((item) => item.id !== id);
       state.cartItem.splice(0, state.cartItem.length, ...updateState);
-      if (window && typeof window !== "undefined") {
-        localStorage.setItem("cartItem", JSON.stringify(state.cartItem));
-      }
+
+      ls?.setItem("cartItem", JSON.stringify(state.cartItem));
     },
   },
 });

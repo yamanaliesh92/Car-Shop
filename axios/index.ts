@@ -1,6 +1,11 @@
 "use client";
 
-import { getCookie, getRefreshCookie, setCookie } from "@/utils/cookie";
+import {
+  getCookie,
+  getRefreshCookie,
+  setCookie,
+  setRefreshCookie,
+} from "@/utils/cookie";
 import * as jwt from "jwt-decode";
 import axios from "axios";
 
@@ -26,7 +31,7 @@ http.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    console.log("orginerror",)
+    console.log("orginerror", { originalRequest });
 
     if (error.response.status === 401 && !originalRequest._retry) {
       // originalRequest._retry = true;
@@ -34,18 +39,22 @@ http.interceptors.response.use(
       try {
         const refreshToken = getRefreshCookie("MyRefreshToken");
 
-        setCookie("MyToken", refreshToken as string);
+        // setCookie("MyToken", refreshToken as string);
 
         const decode = jwt.jwtDecode(refreshToken as string);
         const id: number = decode.id as number;
 
-        const response = await http.post("/auth/re/ref", {
-          id,
-        });
+        const response = await http.post(
+          "/auth/re/ref",
+          {
+            id,
+          }
+          // { auth: refreshToken as string }
+        );
         console.log("responde", response);
         const data = response.data;
         setCookie("MyToken", data.accessToken);
-        setCookie("MyToken", data.refreshToken);
+        setRefreshCookie("MyRefreshToken", data.refreshToken);
 
         // localStorage.setItem("token", token);
 

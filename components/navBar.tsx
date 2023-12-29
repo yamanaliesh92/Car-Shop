@@ -20,6 +20,7 @@ import { meApi } from "@/axios/user/Me.api";
 import { toggle } from "@/redux/theme";
 
 const NavBar = () => {
+  const ds = typeof window !== "undefined" ? window.document : null;
   const [open, setOpen] = useState<boolean>(false);
   const [openCreateCar, setOpenCreateCar] = useState<boolean>(false);
   const dispatch = useDispatch();
@@ -35,8 +36,8 @@ const NavBar = () => {
   });
   {
     mode === true
-      ? document.documentElement.classList.add("dark")
-      : document.documentElement.classList.remove("dark");
+      ? ds?.documentElement.classList.add("dark")
+      : ds?.documentElement.classList.remove("dark");
   }
 
   const changeOpe = () => {
@@ -86,13 +87,15 @@ const NavBar = () => {
         </div>
 
         <div className="hidden  sm:flex items-center gap-4 relative">
-          <Link href={"/sign"}>
-            <CustomButton
-              title="Sign in"
-              btnType="button"
-              containerStyle="text-primary-blue rounded-full bg-white min-w-[130px]"
-            />
-          </Link>
+          {!dateMe && (
+            <Link href={"/sign"}>
+              <CustomButton
+                title="Sign in"
+                btnType="button"
+                containerStyle="text-primary-blue rounded-full bg-white min-w-[130px]"
+              />
+            </Link>
+          )}
           {dateMe && (
             <BsCartFill
               size={25}
@@ -185,7 +188,7 @@ const NavBar = () => {
 
       {openCreateCar && (
         <div className="w-full fixed h-[70%] flex items-center justify-center top-1 p-[6px]">
-          <CreateCategory />
+          <CreateCategory closeModal={setOpenCreateCar} />
         </div>
       )}
     </header>

@@ -3,6 +3,7 @@ import { IPayloadSignUp } from "@/types";
 import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
 import React, { ChangeEvent, useState } from "react";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useRouter } from "next/navigation";
 import { createUserApi } from "../axios/user/create_user.api";
 
@@ -15,6 +16,7 @@ const init: IPayloadSignUp = {
 
 export default function Sign() {
   const [element, setElement] = useState<IPayloadSignUp>(init);
+  const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
 
@@ -36,6 +38,7 @@ export default function Sign() {
     mutationFn: createUserApi,
     onSuccess: () => {
       router.push("/login");
+      alert("hello");
     },
   });
 
@@ -58,7 +61,7 @@ export default function Sign() {
         )}
         <form className="p-4 items-center flex flex-col" onSubmit={onSubmit}>
           <h1
-            data-testid="we"
+            data-testid="title"
             className="font-bold items-center"
             data-cy={"title"}
           >
@@ -77,17 +80,30 @@ export default function Sign() {
               onChange={(e) => onChange(e, "email", false)}
             />
           </div>
-          <div className="w-full mt-3">
+          <div className="w-full mt-3 relative">
             <input
               className="w-full p-6 h-[35px] border-none rounded-md outline-none"
-              placeholder="enter your email"
+              placeholder="enter your password"
               value={element.password}
               name="password"
               data-cy={"passwordInput"}
-              type={"password"}
+              type={showPassword ? "text" : "password"}
               required
               onChange={(e) => onChange(e, "password", false)}
             />
+            {showPassword ? (
+              <AiOutlineEye
+                size={22}
+                className="absolute right-2 top-[17px] cursor-pointer"
+                onClick={() => setShowPassword((prev) => !prev)}
+              />
+            ) : (
+              <AiOutlineEyeInvisible
+                size={22}
+                className="absolute right-2 top-[17px] cursor-pointer"
+                onClick={() => setShowPassword((prev) => !prev)}
+              />
+            )}
           </div>
           <div className="w-full mt-3">
             <input

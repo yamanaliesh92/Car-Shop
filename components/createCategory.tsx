@@ -32,14 +32,14 @@ const init: IPayloadCar = {
 };
 
 interface IProps {
-  closeModal: Dispatch<SetStateAction<boolean>>;
+  closeModal?: Dispatch<SetStateAction<boolean>>;
 }
-const CreateCategory = () => {
+const CreateCategory: FC<IProps> = ({ closeModal }) => {
   const [element, setElement] = useState<string>("");
 
-  // const close = () => {
-  // //   closeModal((prev) => !prev);
-  // // };
+  const close = () => {
+    closeModal && closeModal((prev) => !prev);
+  };
 
   const [elementInput, setElementInput] = useState<IPayloadCar>(init);
   const [openNextForm, setOpenNextForm] = useState(false);
@@ -61,13 +61,9 @@ const CreateCategory = () => {
     });
   };
 
-  // const changeOpenNextForm = () => {
-  //   setOpenNextForm((prev) => !prev);
-  // };
-
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const onChangse = (item: string) => {
+  const onChanges = (item: string) => {
     setElement(item);
     setOpenCategory((prev) => !prev);
   };
@@ -122,16 +118,14 @@ const CreateCategory = () => {
     await mutateAsync(formData as any);
   };
 
-  // const close = () => {
-  //   closeModal(false);
-  // };
-
   return (
     <div
       data-cy="createForm"
       className="p-4 w-[500px] relative bg-blue-300 h-[350px] rounded-md"
     >
-      <div className="s flex justify-end">X</div>
+      <div onClick={close} className="flex justify-end cursor-pointer">
+        X
+      </div>
       <form className="flex flex-col p-2 items-center" onSubmit={onSubmit}>
         <h1
           data-cy="title"
@@ -139,10 +133,7 @@ const CreateCategory = () => {
         >
           Create car
         </h1>
-        <div
-          // onClick={changeOpenNextForm}
-          className={`p-1 ${openNextForm ? "hidden" : "block"}`}
-        >
+        <div className={`p-1 ${openNextForm ? "hidden" : "block"}`}>
           <div className="w-full mt-2 grid grid-cols-2 gap-3">
             <input
               data-cy="nameInput"
@@ -197,7 +188,7 @@ const CreateCategory = () => {
                     <h1
                       key={item.id}
                       data-cy={item.dataCy}
-                      onClick={() => onChangse(item.name)}
+                      onClick={() => onChanges(item.name)}
                       className="hover:bg-gray-500"
                     >
                       {item.name}
