@@ -1,6 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import cart from "./cart";
-import themeSlice from "./theme";
+import cart, { ICart } from "./cart";
+import themeSlice, { IMode } from "./theme";
+
+export interface IRedux {
+  theme: IMode;
+  cart: ICart;
+}
 
 const Store = configureStore({
   reducer: {
@@ -9,9 +14,8 @@ const Store = configureStore({
   },
 });
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof Store.getState>;
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
+
 export type AppDispatch = typeof Store.dispatch;
 
 export default Store;

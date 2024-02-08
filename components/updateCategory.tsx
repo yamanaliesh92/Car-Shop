@@ -8,6 +8,12 @@ import React, { ChangeEvent, FC, useRef, useState } from "react";
 import { UpdateImgCarApi } from "@/axios/car/update.img.api";
 import { toast } from "react-hot-toast";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import Input from "./input";
+import Button from "./button";
+
 interface IProps {
   closeModal: React.Dispatch<
     React.SetStateAction<{
@@ -55,6 +61,29 @@ const UpdateCategory: FC<IProps> = ({ car, closeModal }) => {
     const value = e.target.files[0];
     setFile(value);
   };
+
+  const schema = z.object({
+    name: z.string().min(2).max(22),
+    carColor: z.string().min(2).max(22),
+    category: z.string().min(2),
+    sell: z.string().min(2),
+    price: z.number().min(2),
+    year: z.number().min(2),
+    make: z.string().min(2),
+    transmission: z.string().min(2),
+    type: z.string().min(2),
+
+    cylinders: z.number().min(2),
+    password: z.string().min(2).max(20),
+  });
+
+  type Schema = z.infer<typeof schema>;
+
+  const { register, handleSubmit, formState } = useForm<Schema>({
+    resolver: zodResolver(schema),
+  });
+
+  const { errors } = formState;
 
   const openImg = () => {
     setOpen((prev) => !prev);
@@ -132,85 +161,110 @@ const UpdateCategory: FC<IProps> = ({ car, closeModal }) => {
   };
 
   return (
-    <div className="fixed w-full flex items-center justify-center h-full bg-yellow-600 z-40 inset-0 bg-opacity-25">
-      <div className="w-[450px] shadow-xl transition-all ease-in-out duration-100 h-[450px] flex items-start flex-col p-2  overflow-y-auto bg-white rounded-md">
-        <div onClick={close} className="self-end p-3 cursor-pointer">
+    <div className="fixed inset-0 top-3 z-990 bg-white/80 dark:bg-black/80 backdrop-blur-sm  h-screen    left-0 flex items-center justify-center">
+      <div className="p-4 w-[350px] mt-20 sm:w-[500px] relative  bg-black/70 dark:bg-white h-fit rounded-md">
+        <div onClick={close} className="self-end mt-2 ml-3 p-3 cursor-pointer">
           X
         </div>
         <form className="flex flex-col sm:p-2 items-center" onSubmit={onSubmit}>
-          <div className="w-full mt-2 grid grid-cols-2 gap-3">
-            <input
-              placeholder="name of car"
-              value={element.name}
-              onChange={(e) => onChange(e, "name", false)}
-              className="p-2 bg-gray-300 rounded-md focus:outline-none"
-            />
-            <input
-              value={element.make}
-              onChange={(e) => onChange(e, "make", false)}
-              placeholder="make of car"
-              className="p-2  bg-gray-300 rounded-md focus:outline-none"
-            />
+          <div className="w-full  grid grid-cols-2 gap-3">
+            <div className="flex flex-col">
+              <Input
+                value={element.name}
+                {...register("name", { value: car.name })}
+                type="text"
+                label="Name"
+              />
+            </div>
+            <div className="flex flex-col">
+              <Input
+                value={element.make}
+                {...register("make", { value: car.make })}
+                type="text"
+                label="Make"
+              />
+            </div>
           </div>
           <div className="w-full mt-2 grid grid-cols-2 gap-3">
-            <input
-              placeholder="cylinders of car"
-              value={element.cylinders}
-              type={"number"}
-              onChange={(e) => onChange(e, "cylinders", true)}
-              className="p-2 bg-gray-300 rounded-md focus:outline-none"
-            />
-            <input
-              placeholder="year of car"
-              value={element.year}
-              type={"number"}
-              onChange={(e) => onChange(e, "year", true)}
-              className="p-2  bg-gray-300 rounded-md focus:outline-none"
-            />
+            <div className="flex flex-col">
+              <Input
+                value={element.year}
+                {...register("year", { value: car.year, valueAsNumber: true })}
+                type="number"
+                label="Year"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <Input
+                value={element.cylinders}
+                {...register("cylinders", {
+                  value: car.cylinders,
+                  valueAsNumber: true,
+                })}
+                type="number"
+                label="Cylinders"
+              />
+            </div>
           </div>
 
           <div className="w-full mt-2 grid grid-cols-2 gap-3">
-            <input
-              placeholder="type of car"
-              value={element.type}
-              onChange={(e) => onChange(e, "type", false)}
-              className="p-2  bg-gray-300 rounded-md focus:outline-none"
-            />
-            <input
-              placeholder="transmission of car"
-              value={element.transmission}
-              onChange={(e) => onChange(e, "transmission", false)}
-              className="p-2  bg-gray-300 rounded-md focus:outline-none"
-            />
+            <div className="flex flex-col">
+              <Input
+                value={element.type}
+                {...register("type", { value: car.type })}
+                type="text"
+                label="Type"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <Input
+                value={element.transmission}
+                {...register("transmission", { value: car.transmission })}
+                type="text"
+                label="Transmission"
+              />
+            </div>
           </div>
           <div className="w-full mt-2 grid grid-cols-2 gap-3">
-            <input
-              placeholder="price of car"
-              value={element.price}
-              type={"number"}
-              onChange={(e) => onChange(e, "price", true)}
-              className="p-2 bg-gray-300 rounded-md focus:outline-none"
-            />
-            <input
-              placeholder="model of car"
-              value={element.carColor}
-              onChange={(e) => onChange(e, "carColor", false)}
-              className="p-2  bg-gray-300 rounded-md focus:outline-none"
-            />
+            <div className="flex flex-col">
+              <Input
+                value={element.price}
+                {...register("price", {
+                  value: car.price,
+                  valueAsNumber: true,
+                })}
+                type="number"
+                label="Price"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <Input
+                value={element.carColor}
+                {...register("carColor", { value: element.carColor })}
+                type="text"
+                label="CarColor"
+              />
+            </div>
           </div>
           <div className="w-full mt-2 grid grid-cols-2 gap-3">
-            <input
-              placeholder="name of car"
-              value={element.sell}
-              onChange={(e) => onChange(e, "sell", false)}
-              className="p-2  bg-gray-300 rounded-md focus:outline-none"
-            />
-            <input
-              placeholder="model of car"
-              value={element.category}
-              onChange={(e) => onChange(e, "category", false)}
-              className="p-2 bg-gray-300 rounded-md focus:outline-none"
-            />
+            <div className="flex flex-col">
+              <Input
+                {...register("sell", { value: car.sell })}
+                type="text"
+                label="Sell"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <Input
+                {...register("category", { value: car.category })}
+                type="text"
+                label="Category"
+              />
+            </div>
           </div>
 
           <input
@@ -220,24 +274,24 @@ const UpdateCategory: FC<IProps> = ({ car, closeModal }) => {
             className="p-2 bg-white hidden rounded-md focus:outline-none"
             placeholder="jdj"
           />
-          <div className="flex items-center" data-cy="img" onClick={openImg}>
-            <h1 data-cy="pictures" className="mr-2">
+          <div
+            className="flex items-center mt-2 "
+            data-cy="img"
+            onClick={openImg}
+          >
+            <h1
+              data-cy="pictures"
+              className="mr-2 text-white dark:text-black-100"
+            >
               to change img click here
             </h1>
-            <HiPhotograph size={"30"} />
+            <HiPhotograph
+              className=" text-white dark:text-black-100"
+              size={"30"}
+            />
           </div>
-          <div className="w-full mt-2 grid grid-cols-2 gap-3">
-            <button
-              onClick={close}
-              type={"button"}
-              className="w-[65px] self-center  h-[45px] p-2 cursor-pointer rounded-md text-white bg-gray-400"
-            >
-              cancel
-            </button>
-            <button className="w-[65px] self-center h-[45px] p-2 cursor-pointer rounded-md text-white bg-gray-400">
-              update
-            </button>
-          </div>
+
+          <Button>update</Button>
         </form>
       </div>
     </div>

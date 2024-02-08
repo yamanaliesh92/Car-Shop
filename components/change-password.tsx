@@ -4,112 +4,114 @@ import Link from "next/link";
 
 import React, { ChangeEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-
-const init: IPayloadLogin = {
-  email: "",
-  password: "",
-};
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import Input from "./input";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import Button from "./button";
 
 export default function ChangePassword() {
-  const [element, setElement] = useState<IPayloadLogin>(init);
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [errorConfirmPassword, setErrorConfirmPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
 
-  //   const { mutateAsync, error, data } = useMutation({
-  //     mutationFn: LoginUserApi,
-  //     onSuccess: () => {
-  //       router.push("/");
-  //       setCookie("MyToken", data?.token as string);
-  //     },
-  //   });
+  const schema = z
+    .object({
+      email: z.string().email(),
+      confirmPassword: z.string().min(2).max(20),
+      password: z.string().min(2).max(20),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "password don't match",
+      path: ["confirmPassword"],
+    });
+  type Schema = z.infer<typeof schema>;
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const { register, handleSubmit, formState } = useForm<Schema>({
+    resolver: zodResolver(schema),
+  });
+
+  const { errors } = formState;
+
+  // const { mutateAsync, error, data } = useMutation({
+  //   mutationFn: LoginUserApi,
+  //   onSuccess: () => {
+  //     router.push("/login");
+  //     // setCookie("MyToken", data?.token as string);
+  //   },
+  // });
+
+  const onSubmit = async (element: Schema) => {
     const body: IPayloadLogin = {
       email: element.email,
       password: element.password,
     };
 
-    if (body.password !== confirmPassword) {
-      setErrorConfirmPassword(true);
-      setInterval(() => {
-        setErrorConfirmPassword(false);
-      }, 2000);
-    }
-
     // await mutateAsync(body);
     // console.log(data, "dddddddddddddddddd");
   };
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setElement((prev) => {
-      return {
-        ...prev,
-        [e.target.name]: e.target.value,
-      };
-    });
-  };
-
   return (
-    <div className="p-1 sm:px-10 w-full">
-      <h2 data-cy="title" className="font-bold text-2xl text-[#184191]">
+    <div className="p-3 h-fit  sm:p-5 w-full bg-black/70 dark:bg-white">
+      <h2
+        data-cy="title"
+        className="font-bold text-[17px] text-center my-4 p-2 text-white dark:text-black"
+      >
         change_password
       </h2>
-      <form className="flex flex-col gap-4" onSubmit={onSubmit}>
-        <input
-          className="p-2 mt-8 rounded-xl border w-[130px] sm:w-full"
-          placeholder="enter your email"
-          value={element.email}
-          data-cy={"emailInput"}
-          name="email"
-          type={"email"}
-          required
-          onChange={onChange}
-        />
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex flex-col">
+          <p className="text-[12px] sm:text-[15px] mt-1   text-red-400">
+            {errors.email?.message}
+          </p>
 
-        <div className="relative mt-4">
-          <input
-            className="sm:w-full p-2  border rounded-xl w-[130px]"
-            placeholder="enter a new  password"
-            value={element.password}
-            name="password"
-            data-cy={"passwordInput"}
-            type={"password"}
-            required
-            onChange={onChange}
+          <Input
+            {...register("email")}
+            data_cy={"emailInput"}
+            label="Email"
+            type="email"
           />
         </div>
 
-        <div className="relative mt-4">
-          <input
-            className="sm:w-full p-2  border rounded-xl w-[130px]"
-            placeholder="enter a new password again"
-            value={confirmPassword}
-            name="confirmPassword"
-            data-cy={"confirmPasswordInput"}
-            type={"password"}
-            required
-            onChange={(e) => setConfirmPassword(e.target.value)}
+        <div className="w-full flex flex-col  mt-2 relative">
+          <p className="text-[12px] sm:text-[15px] mt-1  text-red-400">
+            {errors.password?.message}
+          </p>
+
+          <Input
+            {...register("password")}
+            label="Password"
+            type={showPassword ? "text" : "password"}
+          />
+
+          {showPassword ? (
+            <AiOutlineEye
+              size={22}
+              className="absolute  dark:text-black right-[1.8rem] top-[34px]   sm:right-2 sm:top-[35px] cursor-pointer"
+              onClick={() => setShowPassword((prev) => !prev)}
+            />
+          ) : (
+            <AiOutlineEyeInvisible
+              size={22}
+              className="absolute dark:text-black right-[1.8rem] top-[34px] sm:right-2 sm:top-[35px] cursor-pointer"
+              onClick={() => setShowPassword((prev) => !prev)}
+            />
+          )}
+        </div>
+
+        <div className="relative mt-4 flex flex-col">
+          <Input
+            {...register("confirmPassword")}
+            label="ConfirmPassword"
+            type={"text"}
           />
         </div>
 
-        {errorConfirmPassword && (
-          <span className="text-red-500 font-bold">
-            confirmPassword is not equal password try again....
-          </span>
-        )}
-
-        <button
-          data-cy={"submit"}
-          className="mt-4 border-none rounded-xl bg-[#184191] text-white p-2 sm:p-4  w-[130px] sm:w-full"
-        >
-          submit
-        </button>
+        <Button data_cy={"submit"}>Rest</Button>
 
         <Link
-          className="text-blue-600 font-bold mt-2 w-fit p-3 border-b-2 border-b-blue-200"
+          className="text-red-500  underline font-bold m w-fit p-3 "
           href={"/login"}
         >
           back to login
@@ -118,7 +120,3 @@ export default function ChangePassword() {
     </div>
   );
 }
-// important and completed is boolean and name=important.tostring() type="date e.target.chckerd/date:E.tragetr.vaklue
-
-// title decriaotoion date completed important
-// "

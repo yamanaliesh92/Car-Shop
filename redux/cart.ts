@@ -5,7 +5,7 @@ import { IResponseCars } from "@/axios/car/AllCar.api";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { toast } from "react-hot-toast";
 
-interface ICart {
+export interface ICart {
   cartItem: IResponseCars[];
 }
 

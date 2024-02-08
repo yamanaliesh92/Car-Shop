@@ -19,6 +19,8 @@ import { toast } from "react-hot-toast";
 import { ResponseCreateUser } from "@/axios/user/create_user.api";
 import { meApi } from "@/axios/user/Me.api";
 import { addToCart } from "@/redux/cart";
+import Image from "next/image";
+import DeleteCar from "./deleteCar";
 
 interface IProps {
   car: IResponseCars;
@@ -48,6 +50,17 @@ const CarCard: FC<IProps> = ({ car, deleteCar }) => {
 
   const [edit, setEdit] = useState({ idEdit: 0, update: false });
 
+  const [openDeleteModel, setOpenDeleteModel] = useState({
+    open: false,
+    id: 0,
+  });
+
+  const changeOpenDeleteModel = (id: number) => {
+    console.log("open", { open });
+    alert("EEEEEEEEEEEEEEE");
+    setOpenDeleteModel((prev) => ({ open: true, id: id }));
+  };
+
   const changeUpdate = (id: number) => {
     console.log("open", { open });
     setEdit((prev) => ({ idEdit: id, update: !prev.update }));
@@ -59,12 +72,13 @@ const CarCard: FC<IProps> = ({ car, deleteCar }) => {
   };
 
   return (
-    <div className="car-card group dark:bg-black dark:text-white">
+    <div className="car-card group dark:bg-white dark:text-black">
       <div className="car-card__content">
         <h2 data-cy={`name${car.id}`} className="car-card__content-title">
           {car.name}
         </h2>
-        {dateMe && dateMe.id === car.userId && (
+        <div className="flex items-center">
+          {/* {dateMe && dateMe.id == !car.userId && ( */}
           <div className="flex items-center">
             <MdOutlineSystemSecurityUpdate
               size={25}
@@ -73,37 +87,40 @@ const CarCard: FC<IProps> = ({ car, deleteCar }) => {
               onClick={() => changeUpdate(car.id)}
               title="update"
             />
-            conditional
+
             <MdDelete
               cursor="pointer"
-              onClick={() => deleteCar(car.id)}
+              onClick={() => changeOpenDeleteModel(car.id)}
               size={25}
               title="deleteCar"
+              className="dark:text-black-100 text-white"
             />
           </div>
-        )}
-        <MdAddBox
-          size={25}
-          cursor="pointer"
-          title="addToCart"
-          onClick={addCart}
-        />
+          {/* )} */}
+          <MdAddBox
+            size={25}
+            cursor="pointer"
+            title="addToCart"
+            className="ml-2 text-white dark:text-black-100"
+            onClick={addCart}
+          />
+          <h1 onClick={() => changeOpen(car.id)}>change</h1>
+        </div>
       </div>
 
       <div className="flex justify-between items-center w-full">
-        <p
-          data-cy={`price${car.id}`}
-          className="flex mt-6 items-center text-[32px] leading-[38px] font-extrabold"
-        >
-          {car.price}
-          <span className=" items-center font-bold ml-1 flex text-[14px] leading-[17px]">
-            $
-          </span>
-          <span className="text-[14px] ml-1 leading-[17px] font-medium">
-            /day
-          </span>
-        </p>
-        <p className="text-2xl text-red-400 font-bold">{car.sell}</p>
+        <div className="flex items-center">
+          <p
+            data-cy={`price${car.id}`}
+            className="flex mt-6 items-center text-dangerous text-[22px] leading-[38px] font-extrabold"
+          >
+            {car.price}
+            <span className=" items-center font-bold ml-1 flex text-[14px] leading-[17px]">
+              $
+            </span>
+          </p>
+        </div>
+        <p className="text-[17px] text-secondry font-bold">{car.sell}</p>
       </div>
 
       {dataUser?.data?.map((items) => (
@@ -111,12 +128,16 @@ const CarCard: FC<IProps> = ({ car, deleteCar }) => {
           {car.userId === items.id && (
             <>
               <div className="fle flex items-center my-2">
-                <h1>the owner:</h1>
-                <h1 className="font-bold text-red-400">{items.username} </h1>
+                <h1 className="info">the owner:</h1>
+                <h1 className="font-bold text-dangerous dark:text-primary ">
+                  {items.username}{" "}
+                </h1>
               </div>
               <div className="fle flex items-center my-2">
-                <h1>the owner number:</h1>
-                <h1 className="font-bold text-red-400">{items.number} </h1>
+                <h1 className="info">the owner number:</h1>
+                <h1 className="font-bold text-dangerous dark:text-primary">
+                  {items.number}{" "}
+                </h1>
               </div>
             </>
           )}
@@ -124,34 +145,38 @@ const CarCard: FC<IProps> = ({ car, deleteCar }) => {
       ))}
 
       <div className="relative w-full h-40 my-3 object-contain">
-        <img src={car.img} alt="car model" className="object-contain" />
+        <Image
+          width={220}
+          loader={() => car.img}
+          height={220}
+          src={car.img}
+          alt="car model"
+          className="object-contain"
+        />
       </div>
 
-      <div className="relative flex w-full my-2">
-        <div className="flex group-hover:invisible w-full justify-between text-grey">
+      <div className="relative flex w-full mt-4">
+        <div className="flex  w-full justify-between text-grey">
           <div className="flex flex-col justify-center items-center gap-2">
-            <img
+            <Image
               src="/steering-wheel.svg"
               width={20}
               height={20}
               alt="steering wheel"
             />
-            <p
-              data-cy={`transmission${car.id}`}
-              className="text-[14px] leading-[17px]"
-            >
+            <p data-cy={`transmission${car.id}`} className="info">
               {car.transmission}
             </p>
           </div>
           <div className="car-card__icon">
             <img src="/tire.svg" width={20} height={20} alt="seat" />
-            <p data-cy={`cylinders${car.id}`} className="car-card__icon-text">
+            <p data-cy={`cylinders${car.id}`} className="info">
               {car.cylinders}
             </p>
           </div>
           <div className="car-card__icon">
             <img src="/gas.svg" width={20} height={20} alt="seat" />
-            <p data-cy={`type${car.id}`} className="car-card__icon-text">
+            <p data-cy={`type${car.id}`} className="info">
               {car.type}
             </p>
           </div>
@@ -163,6 +188,17 @@ const CarCard: FC<IProps> = ({ car, deleteCar }) => {
           <CardDetails open={open} closeModal={setOpen} car={car} />
         </>
       ) : null}
+
+      {openDeleteModel.open && car.id === open.id && (
+        <>
+          <DeleteCar
+            deleteCar={deleteCar}
+            id={car.id}
+            close={setOpenDeleteModel}
+          />
+          <h1 className="w-[400px] h-[40px] bg-red-800">ddddddddddddd</h1>
+        </>
+      )}
 
       {edit.update && car.id === edit.idEdit && (
         <>

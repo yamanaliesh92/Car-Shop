@@ -1,22 +1,12 @@
 import cookies from "js-cookie";
 
-type Cookies = "MyToken";
-
-type CookiesRf = "MyRefreshToken";
+type Cookies = "MyToken" | "MyRefreshToken";
 
 export function setCookie(name: Cookies, value: string) {
   return cookies.set(name, value);
 }
 
-export function setRefreshCookie(name: CookiesRf, value: string) {
-  return cookies.set(name, value);
-}
-
 export function getCookie(name: Cookies) {
-  return cookies.get(name);
-}
-
-export function getRefreshCookie(name: CookiesRf) {
   return cookies.get(name);
 }
 

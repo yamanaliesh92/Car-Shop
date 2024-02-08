@@ -17,6 +17,11 @@ import { createCarApi } from "@/axios/car/createCar";
 import { categoryDate } from "@/constants";
 
 import { toast } from "react-hot-toast";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import Input from "./input";
+import Button from "./button";
 const init: IPayloadCar = {
   name: "",
   carColor: "",
@@ -41,25 +46,9 @@ const CreateCategory: FC<IProps> = ({ closeModal }) => {
     closeModal && closeModal((prev) => !prev);
   };
 
-  const [elementInput, setElementInput] = useState<IPayloadCar>(init);
-  const [openNextForm, setOpenNextForm] = useState(false);
   const [file, setFile] = useState<File | null>(null);
 
   const queryClient = useQueryClient();
-
-  const onChangeElement = (
-    e: ChangeEvent<HTMLInputElement>,
-    key: keyof IPayloadCar,
-    isNumber: boolean
-  ) => {
-    const value = isNumber ? e.target.valueAsNumber : e.target.value;
-    setElementInput((prev) => {
-      return {
-        ...prev,
-        [key]: value,
-      };
-    });
-  };
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -74,11 +63,6 @@ const CreateCategory: FC<IProps> = ({ closeModal }) => {
     setOpenCategory((prev) => !prev);
   };
 
-  const moveToNext = (e: React.FormEvent) => {
-    e.preventDefault();
-    setOpenNextForm((prev) => !prev);
-  };
-
   const onChangeFile = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
       return "";
@@ -87,7 +71,7 @@ const CreateCategory: FC<IProps> = ({ closeModal }) => {
     setFile(value);
   };
 
-  const { mutateAsync, error } = useMutation({
+  const { mutateAsync, error, isPending } = useMutation({
     mutationFn: createCarApi,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["allCar"] });
@@ -96,100 +80,140 @@ const CreateCategory: FC<IProps> = ({ closeModal }) => {
     },
   });
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const schema = z.object({
+    name: z.string().min(2).max(22),
+    carColor: z.string(),
+
+    sell: z.string(),
+    price: z.number(),
+    year: z.number(),
+    make: z.string(),
+    transmission: z.string(),
+    type: z.string().min(2),
+
+    cylinders: z.number(),
+  });
+
+  type Schema = z.infer<typeof schema>;
+
+  const { register, handleSubmit, formState } = useForm<Schema>({
+    resolver: zodResolver(schema),
+  });
+
+  const { errors } = formState;
+
+  const onSubmits = async (data: Schema) => {
     if (!file) {
       return;
     }
+
     const formData = new FormData();
-    formData.append("name", elementInput.name);
-    formData.append("carColor", elementInput.carColor);
+    formData.append("name", data.name);
+    formData.append("carColor", data.carColor);
     formData.append("category", element);
-    formData.append("make", elementInput.make);
-    formData.append("userId", elementInput.userId as any);
-    formData.append("cylinders", elementInput.cylinders as any);
-    formData.append("year", elementInput.year as any);
-    formData.append("type", elementInput.type);
-    formData.append("sell", elementInput.sell);
-    formData.append("file", file);
-    formData.append("transmission", elementInput.transmission);
-    formData.append("price", elementInput.price as any);
+    formData.append("make", data.make);
+
+    formData.append("cylinders", String(data.cylinders));
+    formData.append("year", String(data.year));
+    formData.append("type", data.type);
+    formData.append("sell", data.sell);
+    formData.append("img", file);
+    formData.append("transmission", data.transmission);
+    formData.append("price", String(data.price));
 
     await mutateAsync(formData as any);
   };
 
   return (
-    <div
-      data-cy="createForm"
-      className="p-4 w-[500px] relative bg-blue-300 h-[350px] rounded-md"
-    >
-      <div onClick={close} className="flex justify-end cursor-pointer">
-        X
-      </div>
-      <form className="flex flex-col p-2 items-center" onSubmit={onSubmit}>
-        <h1
-          data-cy="title"
-          className="text-2xl font-bold focus:border-pink-600  border-b border-b-gray-400 p-2 "
+    <div className="fixed inset-0 z-50 bg-white/80 dark:bg-black/80 backdrop-blur-sm  h-screen top-0   left-0 flex items-center justify-center">
+      <div
+        data-cy="createForm"
+        className="p-4 w-[350px] sm:w-[500px] relative  bg-black/70 dark:bg-white h-fit rounded-md"
+      >
+        <div className="flex justify-between border-b border-b-gray-400">
+          <h1
+            data-cy="title"
+            className="text-[20px] text-white dark:text-black font-bold   p-2 "
+          >
+            Create car
+          </h1>
+          <h1
+            onClick={close}
+            className="cursor-pointer text-white dark:text-black text-2xl"
+          >
+            X
+          </h1>
+        </div>
+        <form
+          noValidate
+          className="flex flex-col p-2 items-center"
+          onSubmit={handleSubmit(onSubmits)}
         >
-          Create car
-        </h1>
-        <div className={`p-1 ${openNextForm ? "hidden" : "block"}`}>
-          <div className="w-full mt-2 grid grid-cols-2 gap-3">
-            <input
-              data-cy="nameInput"
-              placeholder="name of car"
-              name="car"
-              value={elementInput.name}
-              onChange={(e) => onChangeElement(e, "name", false)}
-              required
-              className="p-2 bg-white rounded-md focus:outline-none"
-            />
-            <input
-              placeholder="enter your color car"
-              data-cy="carColorInput"
-              value={elementInput.carColor}
-              name="carColor"
-              onChange={(e) => onChangeElement(e, "carColor", false)}
-              required
-              className="p-2 bg-white rounded-md focus:outline-none"
-            />
-          </div>
+          {error && <h1 className="error">{error.message}</h1>}
+          <div className="w-full  grid grid-cols-2 gap-3">
+            <div className="flex flex-col">
+              <p className="error">{errors.name?.message}</p>
 
-          <div className="w-full mt-3 grid grid-cols-2 gap-3">
-            <div
-              placeholder="year"
-              // name="year"
-              // onChange={(e) => onChangeElement(e, "year", true)}
-
-              className="relative p-2 bg-white rounded-md focus:outline-none flex justify-between items-center"
-            >
-              <h1 className="font-bold text-blue-300">
-                {element ? element : "category"}
-              </h1>
-              <AiOutlineArrowDown
-                data-cy="categoryButton"
-                onClick={changeOpenCategory}
+              <Input
+                {...register("name")}
+                label="Name"
+                data_cy="nameInput"
+                type="text"
               />
             </div>
-            <input
-              className="p-2 bg-white rounded-md focus:outline-none"
-              name="year"
-              placeholder="which year made it"
-              data-cy="yearInput"
-              required
-              type={"number"}
-              value={elementInput.year}
-              onChange={(e) => onChangeElement(e, "year", true)}
-            />
+
+            <div className="flex flex-col">
+              <p className="error">{errors.carColor?.message}</p>
+
+              <Input
+                {...register("carColor")}
+                label="CarColor"
+                type="text"
+                data_cy="carColorInput"
+              />
+            </div>
+          </div>
+
+          <div className="w-full mt-2 grid grid-cols-2 gap-3">
+            <div className="flex flex-col ">
+              <label className=" text-white mt-1 dark:text-black text-[14px]">
+                Category
+              </label>
+
+              <div
+                placeholder="year"
+                className="relative  p-2 mt-1 h-[35px] rounded-xl border w-[130px] sm:w-full bg-white text-black dark:bg-white dark:text-black  outline-0 text-sm  border-white dark:border-black   placeholder:text-black focus:dark:border-green-400 focus:border-red-900 flex justify-between items-center"
+              >
+                <h1 className="font-bold dark:text-black-100 text-white">
+                  {element ? element : "category"}
+                </h1>
+                <AiOutlineArrowDown
+                  data-cy="categoryButton"
+                  onClick={changeOpenCategory}
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col">
+              <p className="error">{errors.year?.message}</p>
+
+              <Input
+                {...register("year", { valueAsNumber: true })}
+                label="Year"
+                type="number"
+                data_cy="yearInput"
+              />
+            </div>
+
             {openCategory && (
-              <div className="w-[140px]  sm:w-[220px] h-[100px] absolute top-[10.4rem] left-[24px]">
+              <div className="w-[140px]  sm:w-[190px] h-[100px] absolute top-[13.4rem] left-[54px]">
                 <ul className="w-full h-full p-2  bg-white flex rounded-md flex-col  overflow-y-auto">
                   {categoryDate.map((item) => (
                     <h1
                       key={item.id}
                       data-cy={item.dataCy}
                       onClick={() => onChanges(item.name)}
-                      className="hover:bg-gray-500"
+                      className="hover:bg-primary"
                     >
                       {item.name}
                     </h1>
@@ -199,88 +223,93 @@ const CreateCategory: FC<IProps> = ({ closeModal }) => {
             )}
           </div>
 
-          <div className="w-full mt-3 grid grid-cols-2 gap-3">
-            <input
-              placeholder="enter type your car"
-              data-cy="typeInput"
-              required
-              className="p-2 bg-white rounded-md focus:outline-none"
-              value={elementInput.type}
-              onChange={(e) => onChangeElement(e, "type", false)}
-            />
+          <div className="w-full mt-2 grid grid-cols-2 gap-3">
+            <div className="flex flex-col">
+              <p className="error">{errors.type?.message}</p>
 
-            <input
-              placeholder="cylinders your car"
-              value={elementInput.cylinders}
-              type={"number"}
-              required
-              data-cy="cylindersInput"
-              onChange={(e) => onChangeElement(e, "cylinders", true)}
-              className="p-2 bg-white rounded-md focus:outline-none"
-            />
+              <Input
+                {...register("type")}
+                label="Type"
+                type="text"
+                data_cy="typeInput"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <p className="error">{errors.cylinders?.message}</p>
+
+              <Input
+                {...register("cylinders", { valueAsNumber: true })}
+                label="Cylinders"
+                type="number"
+                data_cy="cylindersInput"
+              />
+            </div>
           </div>
 
-          <button
-            type="submit"
-            onClick={moveToNext}
-            data-cy="moveButton"
-            className="s self-start rounded-md mt-3 p-2 bg-blue-600 text-white"
-          >
-            Next
-          </button>
-        </div>
+          <div className="w-full mt-2 grid grid-cols-2 gap-3">
+            <div className="flex flex-col">
+              <p className="error">{errors.price?.message}</p>
 
-        <div className={`p-1 ${openNextForm ? "flex" : "hidden"} flex-col`}>
-          <div className="w-full mt-3 grid grid-cols-2 gap-3">
-            <input
-              placeholder="price"
-              type={"number"}
-              value={elementInput.price}
-              data-cy="priceInput"
-              required
-              name="price"
-              onChange={(e) => onChangeElement(e, "price", true)}
-              className="p-2 bg-white rounded-md focus:outline-none"
-            />
-            <select
-              value={elementInput.sell}
-              required
-              name="sell"
-              onChange={(e) =>
-                setElementInput({ ...elementInput, sell: e.target.value })
-              }
-              className="p-2 bg-white rounded-md focus:outline-none"
-            >
-              <option>Rent</option>
-              <option>Sale</option>
-            </select>
+              <Input
+                {...register("price", { valueAsNumber: true })}
+                label="Price"
+                type="number"
+                data_cy="priceInput"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label
+                className="text-white dark:text-black text-[14px]"
+                htmlFor="sell"
+              >
+                Sell
+              </label>
+
+              <select
+                id="sell"
+                {...register("sell")}
+                name="sell"
+                className="p-2 mt-1 h-[35px] rounded-xl border w-[130px] sm:w-full bg-white text-black dark:bg-white dark:text-black  outline-0 text-sm  border-white dark:border-black   placeholder:text-black focus:dark:border-green-400 focus:border-red-900 "
+              >
+                <option>Rent</option>
+                <option>Sale</option>
+              </select>
+            </div>
           </div>
 
-          <div className="w-full mt-3 grid grid-cols-2 gap-3">
-            <input
-              placeholder="enter where did you make it"
-              value={elementInput.make}
-              data-cy="makeInput"
-              onChange={(e) => onChangeElement(e, "make", false)}
-              className="p-2 bg-white rounded-md focus:outline-none"
-            />
+          <div className="w-full mt-2 grid grid-cols-2 gap-3">
+            <div className="flex flex-col">
+              <p className="error">{errors.make?.message}</p>
 
-            <select
-              value={elementInput.transmission}
-              onChange={(e) =>
-                setElementInput({
-                  ...elementInput,
-                  transmission: e.target.value,
-                })
-              }
-              className="p-2 bg-white rounded-md focus:outline-none"
-            >
-              <option>automatic</option>
-              <option>Manual</option>
-            </select>
+              <Input
+                {...register("make")}
+                label="Make"
+                type="text"
+                data_cy="makeInput"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label
+                className="text-white mt-1 dark:text-black text-[14px]"
+                htmlFor="transmission"
+              >
+                Transmission
+              </label>
+              <select
+                id="transmission"
+                {...register("transmission")}
+                className="p-2 mt-1 h-[35px] rounded-xl border w-[130px] sm:w-full bg-white text-black dark:bg-white dark:text-black  outline-0 text-sm  border-white dark:border-black   placeholder:text-black focus:dark:border-green-400 focus:border-red-900 "
+              >
+                <option>automatic</option>
+                <option>Manual</option>
+              </select>
+            </div>
           </div>
 
-          <div className="w-full mt-3 grid grid-cols-2 gap-3">
+          <div className="w-full mt-2 grid grid-cols-2 gap-3">
             <input
               ref={inputRef}
               onChange={onChangeFile}
@@ -289,37 +318,26 @@ const CreateCategory: FC<IProps> = ({ closeModal }) => {
               placeholder="jdj"
             />
             <div
-              className="flex items-center"
+              className="flex items-center cursor-pointer"
               data-cy="img"
               onClick={() => inputRef.current?.click()}
             >
-              <h1 data-cy="pictures" className="font-bold mr-2">
+              <h1
+                data-cy="pictures"
+                className="font-bold mr-1 text-[13px] sm:text-[17px] sm:mr-2 text-white dark:text-black-100"
+              >
                 add car pictures
               </h1>
-              <HiPhotograph size={"30"} />
+              <HiPhotograph
+                className="text-white dark:text-black-100"
+                size={"30"}
+              />
             </div>
           </div>
 
-          <div className="flex justify-between mt-3 ">
-            <button
-              type="submit"
-              data-cy="perviousButton"
-              onClick={moveToNext}
-              className="s self-start rounded-md mt-2 p-1  sm:p-2 bg-blue-600 text-white"
-            >
-              Pervious
-            </button>
-
-            <button
-              type="submit"
-              data-cy="createCategoryButton"
-              className="s self-start rounded-md mt-2  p-1 sm:p-2 ml-1 sm:ml-0   bg-blue-600 text-white"
-            >
-              create
-            </button>
-          </div>
-        </div>
-      </form>
+          <Button isLoading={isPending}>Create</Button>
+        </form>
+      </div>
     </div>
   );
 };

@@ -3,7 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 
 const Footer = () => (
-  <footer className="flex flex-col text-black-100   border-t border-gray-100 dark:border-black dark:text-gray-100 dark:bg-black  ">
+  <footer
+    id="about"
+    className="flex flex-col text-black-100   border-t border-gray-100 dark:border-black dark:text-gray-100 dark:bg-black  "
+  >
     <div className="flex max-md:flex-col flex-wrap justify-between gap-5 sm:px-16 px-6 py-10">
       <div className="flex flex-col justify-start items-start gap-6">
         <Image

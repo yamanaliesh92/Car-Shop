@@ -18,6 +18,8 @@ import CreateCategory from "./createCategory";
 import { ResponseCreateUser } from "@/axios/user/create_user.api";
 import { meApi } from "@/axios/user/Me.api";
 import { toggle } from "@/redux/theme";
+import { IRedux } from "@/redux/store";
+import Button from "./button";
 
 const NavBar = () => {
   const ds = typeof window !== "undefined" ? window.document : null;
@@ -26,9 +28,9 @@ const NavBar = () => {
   const dispatch = useDispatch();
   const [openBurger, setOpenBurger] = useState(false);
 
-  const mode = useSelector((state: any) => state.theme.mode);
+  const mode = useSelector((state: IRedux) => state.theme.mode);
 
-  const cart = useSelector((state: any) => state.cart.cartItem);
+  const cart = useSelector((state: IRedux) => state.cart.cartItem);
 
   const { data: dateMe } = useQuery<ResponseCreateUser>({
     queryKey: ["me"],
@@ -40,7 +42,7 @@ const NavBar = () => {
       : ds?.documentElement.classList.remove("dark");
   }
 
-  const changeOpe = () => {
+  const changeOpen = () => {
     setOpenBurger(false);
     setOpen((prev) => !prev);
   };
@@ -54,11 +56,12 @@ const NavBar = () => {
     setOpenCreateCar((prev) => !prev);
   };
   console.log("theme", mode);
+
   return (
-    <header className="w-full z-10 sticky h-[75px]">
+    <header className="fixed  top-0 z-[1000] w-full border-b-1      ">
       <nav
         className="max-w-[1440px]
-          w-full  mx-auto flex justify-between items-center sm:px-16 px-6 py-4 light:bg-transparent dark:text-white/80 dark:bg-black"
+          w-full  mx-auto h flex p-3   justify-between items-center sm:px-16 px-6  light:bg-transparent dark:text-white/80 dark:bg-black"
       >
         <div className=" w-full sm:w-fit flex  justify-between items-center">
           <Link href="/" className="flex justify-center items-end">
@@ -67,7 +70,7 @@ const NavBar = () => {
               alt="logo"
               width={118}
               height={18}
-              className="object-contain dark:text-white"
+              className="object-contain dark:bg-[#184191]  dark:p-2 dark:rounded-md"
             />
           </Link>
 
@@ -89,19 +92,15 @@ const NavBar = () => {
         <div className="hidden  sm:flex items-center gap-4 relative">
           {!dateMe && (
             <Link href={"/sign"}>
-              <CustomButton
-                title="Sign in"
-                btnType="button"
-                containerStyle="text-primary-blue rounded-full bg-white min-w-[130px]"
-              />
+              <Button>Sign in</Button>
             </Link>
           )}
-          {dateMe && (
+          {!dateMe && (
             <BsCartFill
               size={25}
               data-cy="cart"
               cursor={"pointer"}
-              onClick={changeOpe}
+              onClick={changeOpen}
             />
           )}
           {dateMe && (
@@ -110,7 +109,7 @@ const NavBar = () => {
             </div>
           )}
 
-          {dateMe && (
+          {!dateMe && (
             <Link href={"/dashboard"} data-cy="dashboardButton">
               <MdSpaceDashboard
                 title="your dashboard"
@@ -141,17 +140,17 @@ const NavBar = () => {
         <div className="w-full h-screen duration-300 transition-all border-t-2 border-t-primary-blue-100 ease-in-out z-30 top-0 right-0 light:bg-transparent dark:text-white/80 dark:bg-black flex  justify-center">
           <div className="fe flex mt-5 p-3 flex-col items-center gap-4">
             <div className="re relative">
-              {dateMe && (
-                <BsCartFill
-                  size={20}
-                  data-cy="cart"
-                  cursor={"pointer"}
-                  onClick={changeOpe}
-                />
-              )}
+              {/* {!dateMe && ( */}
+              <BsCartFill
+                size={20}
+                data-cy="cart"
+                cursor={"pointer"}
+                onClick={changeOpen}
+              />
+              {/* )} */}
               <div className="w-[20px] h-[20px] rounded-full bg-red-500"></div>
             </div>
-            {dateMe && (
+            {!dateMe && (
               <Link href={"/dashboard"} data-cy="dashboardButton">
                 <MdSpaceDashboard
                   onClick={() => setOpenBurger(false)}
@@ -182,14 +181,14 @@ const NavBar = () => {
       ) : null}
       {open ? (
         <div className="fixed top-0 right-0 z-50 transition-all duration-300 w-[350px] h-full">
-          <Cart setOpen={setOpen} />
+          <Cart open={open} setOpen={setOpen} />
         </div>
       ) : null}
 
       {openCreateCar && (
-        <div className="w-full fixed h-[70%] flex items-center justify-center top-1 p-[6px]">
-          <CreateCategory closeModal={setOpenCreateCar} />
-        </div>
+        // <div className="w-full fixed h-[70%] flex items-center justify-center top-1 p-[6px]">
+        <CreateCategory closeModal={setOpenCreateCar} />
+        // </div>
       )}
     </header>
   );

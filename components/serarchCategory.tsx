@@ -11,7 +11,7 @@ const SearchCategory: FC<IProps> = ({ options }) => {
   const [openCategory, setOpenCategory] = useState(false);
   const [element, setElement] = useState<string>("");
 
-  const onChangse = (item: string) => {
+  const onChanges = (item: string) => {
     console.log("item", item);
     setElement(item);
   };
@@ -24,7 +24,7 @@ const SearchCategory: FC<IProps> = ({ options }) => {
 
   return (
     <div className="w-[200px] ml-20 bg-gray-200 p-4 rounded-md flex items-center justify-between relative">
-      <h1 className="font-bold text-blue-300">
+      <h1 className="font-bold text-primary">
         {element ? element : "category"}
       </h1>
       <AiOutlineArrowDown onClick={changeOpenCategory} />
@@ -35,7 +35,7 @@ const SearchCategory: FC<IProps> = ({ options }) => {
             {options.map((item) => (
               <Link
                 href={`${item}`}
-                onClick={() => onChangse(item)}
+                onClick={() => onChanges(item)}
                 className="hover:bg-gray-500 p-1"
               >
                 {item}

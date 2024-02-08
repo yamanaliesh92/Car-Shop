@@ -35,7 +35,7 @@ export default function ScrollToTop() {
       {visible && (
         <div
           onClick={scrollToTops}
-          className=" bg-red-600 rounded-md flex items-center justify-center w-[50px] h-[50px]"
+          className=" rounded-md bg-primary flex items-center justify-center w-[50px] h-[50px]"
         >
           <AiOutlineArrowUp size={25} />
         </div>

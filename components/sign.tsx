@@ -6,35 +6,33 @@ import React, { ChangeEvent, useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useRouter } from "next/navigation";
 import { createUserApi } from "../axios/user/create_user.api";
-
-const init: IPayloadSignUp = {
-  number: 0,
-  username: "",
-  password: "",
-  email: "",
-};
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import Input from "./input";
+import Button from "./button";
 
 export default function Sign() {
-  const [element, setElement] = useState<IPayloadSignUp>(init);
   const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
 
-  const onChange = (
-    e: ChangeEvent<HTMLInputElement>,
-    key: keyof IPayloadSignUp,
-    isNumber: boolean
-  ) => {
-    const value = isNumber ? e.target.valueAsNumber : e.target.value;
-    setElement((prev) => {
-      return {
-        ...prev,
-        [key]: value,
-      };
-    });
-  };
+  const schema = z.object({
+    email: z.string().email(),
+    username: z.string(),
+    number: z.number().min(2),
+    password: z.string().min(2).max(20),
+  });
 
-  const { mutateAsync, error, isError } = useMutation({
+  type Schema = z.infer<typeof schema>;
+
+  const { register, handleSubmit, formState } = useForm<Schema>({
+    resolver: zodResolver(schema),
+  });
+
+  const { errors } = formState;
+
+  const { mutateAsync, error, isError, isPending } = useMutation({
     mutationFn: createUserApi,
     onSuccess: () => {
       router.push("/login");
@@ -42,8 +40,7 @@ export default function Sign() {
     },
   });
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (element: Schema) => {
     const body: IPayloadSignUp = {
       email: element.email,
       number: element.number,
@@ -54,98 +51,80 @@ export default function Sign() {
     await mutateAsync(body);
   };
   return (
-    <div className=" w-[250px] sm:w-[400px] h-[350px] overflow-hidden">
-      <div className="w-full h-full  rounded-[20px]">
-        {isError && (
-          <h1 className="text-center text-red-300">{error.message}</h1>
-        )}
-        <form className="p-4 items-center flex flex-col" onSubmit={onSubmit}>
-          <h1
-            data-testid="title"
-            className="font-bold items-center"
-            data-cy={"title"}
-          >
-            welcome in car store
-          </h1>
+    <div className=" p-3 sm:p-5 w-full bg-black/70 dark:bg-white ">
+      {isError && <h1>{error.message}</h1>}
+      <h2
+        data-cy="title"
+        className="font-bold text-[17px] text-center  p-2 text-white dark:text-black"
+      >
+        Create a new account
+      </h2>
+      <form
+        noValidate
+        className="flex flex-col w-full mt-2"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        {error && <h1 className="error">{error.message}</h1>}
+        <div className="flex flex-col   mt-2">
+          <p className="error">{errors.email?.message}</p>
 
-          <div className="w-full mt-3">
-            <input
-              className="w-full p-6 h-[35px] border-none rounded-md outline-none"
-              placeholder="enter your email"
-              value={element.email}
-              name="email"
-              type={"email"}
-              data-cy={"emailInput"}
-              required
-              onChange={(e) => onChange(e, "email", false)}
+          <Input {...register("email")} label="Email" type="email" />
+        </div>
+
+        <div className="w-full flex flex-col  mt-2 relative">
+          <p className="error">{errors.password?.message}</p>
+
+          <Input
+            {...register("password")}
+            label="Password"
+            type={showPassword ? "text" : "password"}
+          />
+
+          {showPassword ? (
+            <AiOutlineEye
+              size={22}
+              className="absolute  dark:text-black right-[1.8rem] top-[34px]   sm:right-2 sm:top-[35px] cursor-pointer"
+              onClick={() => setShowPassword((prev) => !prev)}
             />
-          </div>
-          <div className="w-full mt-3 relative">
-            <input
-              className="w-full p-6 h-[35px] border-none rounded-md outline-none"
-              placeholder="enter your password"
-              value={element.password}
-              name="password"
-              data-cy={"passwordInput"}
-              type={showPassword ? "text" : "password"}
-              required
-              onChange={(e) => onChange(e, "password", false)}
+          ) : (
+            <AiOutlineEyeInvisible
+              size={22}
+              className="absolute dark:text-black right-[1.8rem] top-[34px] sm:right-2 sm:top-[35px] cursor-pointer"
+              onClick={() => setShowPassword((prev) => !prev)}
             />
-            {showPassword ? (
-              <AiOutlineEye
-                size={22}
-                className="absolute right-2 top-[17px] cursor-pointer"
-                onClick={() => setShowPassword((prev) => !prev)}
-              />
-            ) : (
-              <AiOutlineEyeInvisible
-                size={22}
-                className="absolute right-2 top-[17px] cursor-pointer"
-                onClick={() => setShowPassword((prev) => !prev)}
-              />
-            )}
-          </div>
-          <div className="w-full mt-3">
-            <input
-              className="w-full p-6 h-[35px] border-none rounded-md outline-none"
-              placeholder="enter your username"
-              value={element.username}
-              name="username"
-              data-cy={"usernameInput"}
-              type={"text"}
-              required
-              onChange={(e) => onChange(e, "username", false)}
-            />
-          </div>
-          <div className="w-full mt-3">
-            <input
-              className="w-full p-6 h-[35px] border-none rounded-md outline-none"
-              placeholder="enter your phone number"
-              value={element.number}
-              required
-              type={"number"}
-              data-cy={"numberInput"}
-              name="number"
-              onChange={(e) => onChange(e, "number", true)}
-            />
-          </div>
-          <div className="flex place-self-start justify-between items-center mt-4">
-            <button
-              data-cy="submit"
-              className="w-fit  h-fit border-none rounded-md outline-none bg-gray-300  text-white p-4"
-            >
-              sign
-            </button>
-            <Link
-              data-cy="toLogin"
-              className="font-bold ml-4 sm:ml-9  text-black"
-              href={"/login"}
-            >
-              Do have account?
-            </Link>
-          </div>
-        </form>
-      </div>
+          )}
+        </div>
+
+        <div className="flex flex-col  mt-2">
+          <p className="text-[12px] sm:text-[15px] mt-1  text-red-400">
+            {errors.username?.message}
+          </p>
+
+          <Input {...register("username")} label="UserName" type={"text"} />
+        </div>
+        <div className="flex flex-col  items-start mt-2">
+          <p className="text-[12px] sm:text-[15px] mt-1  text-red-400">
+            {errors.number?.message}
+          </p>
+
+          <Input
+            {...register("number", { valueAsNumber: true })}
+            label="Number"
+            type={"number"}
+          />
+        </div>
+
+        <Button isLoading={isPending} data_cy={"submit"}>
+          Sign
+        </Button>
+        <Link
+          data-cy="toLogin"
+          className="font-bold underline text-white    dark:text-black"
+          href={"/login"}
+        >
+          Do have account?
+        </Link>
+      </form>
     </div>
   );
 }

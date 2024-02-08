@@ -43,7 +43,7 @@ export default function AllCars() {
   const categories = [...new Set(dates?.map((item) => item.category))];
 
   return (
-    <div>
+    <div id="product">
       <div className="home__filters ">
         <SearchCategory options={categories} />{" "}
       </div>

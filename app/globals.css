@@ -85,7 +85,7 @@
 }
 
 .home__cars-wrapper {
-  @apply grid 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-8 pt-14 mt-4;
+  @apply grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 w-full gap-5 pt-10 mt-4;
 }
 
 .home__error-container {
@@ -95,15 +95,19 @@
 
 /* START: Car Card styles */
 .car-card {
-  @apply flex flex-col p-6 justify-center items-start text-black-100 bg-primary-blue-100 hover:bg-white hover:shadow-md rounded-3xl;
+  @apply flex flex-col p-6 justify-center items-start text-black-100 bg-black-100  hover:shadow-md rounded-3xl;
 }
 
 .car-card__content {
-  @apply w-full flex justify-between items-start gap-2;
+  @apply w-full flex justify-between items-center gap-2;
 }
 
 .car-card__content-title {
-  @apply text-[22px] leading-[26px] font-bold capitalize;
+  @apply text-[18px] w-[100px] overflow-hidden p-3 rounded-md flex items-center justify-center bg-primary text-white dark:text-black-100 leading-[20px] font-bold capitalize;
+}
+
+.info {
+  @apply text-white dark:text-black-100 mr-1;
 }
 
 .car-card__price {
@@ -123,7 +127,7 @@
 }
 
 .car-card__icon-container {
-  @apply flex group-hover:invisible w-full justify-between text-grey;
+  @apply flex group-hover:invisible w-full justify-between text-black-100;
 }
 
 .car-card__icon {
@@ -145,7 +149,7 @@
 }
 
 .car-details__close-btn {
-  @apply absolute top-2 right-2 z-10 w-fit p-2 bg-primary-blue-100 rounded-full;
+  @apply absolute top-2 right-2 z-10 w-fit p-2 bg-primary rounded-full;
 }
 
 .car-details__main-image {
@@ -202,9 +206,9 @@
   @apply flex-1 max-sm:w-full flex justify-start items-center relative;
 }
 
-.searchbar__input {
-  @apply w-full h-[48px] pl-12 p-4 bg-light-white rounded-r-full max-sm:rounded-full outline-none cursor-pointer text-sm;
-}
+/* .searchbar__input {
+  @apply w-full h-[48px] pl-12 p-4 bg-primary rounded-r-full max-sm:rounded-full outline-none cursor-pointer text-sm;
+} */
 /* END: searchbar styles */
 
 /* START: search manufacturer styles */
@@ -213,7 +217,7 @@
 }
 
 .search-manufacturer__input {
-  @apply w-full h-[48px] pl-12 p-4 rounded-l-full max-sm:rounded-full bg-light-white outline-none cursor-pointer text-sm;
+  @apply w-full h-[48px] pl-12 p-4 rounded-l-full max-sm:rounded-full bg-primary outline-none cursor-pointer text-sm;
 }
 
 .search-manufacturer__options {
@@ -222,5 +226,9 @@
 
 .search-manufacturer__option {
   @apply cursor-default select-none py-2 pl-10 pr-4;
+}
+
+.error {
+  @apply text-[15px] text-dangerous text-center my-1;
 }
 /* END: search manufacturer styles */

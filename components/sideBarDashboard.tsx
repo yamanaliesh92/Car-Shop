@@ -7,7 +7,7 @@ const SideBarDashboard = () => {
       {DataSideBar.map((item) => (
         <Link
           href={`${item.link}`}
-          className="flex items-center w-full justify-between p-1 sm:p-2 mt-2 hover:cursor-pointer hover:bg-gray-400"
+          className="flex items-center w-full justify-between p-1 sm:p-2 mt-2 hover:text-white hover:cursor-pointer hover:bg-primary"
         >
           <h1 className="font-bold mr-1 md:mr">{item.name}</h1>
           <item.icon />

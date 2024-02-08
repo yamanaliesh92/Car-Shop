@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function PageSaved() {
   return (
-    <div className="w-full h-full  flex flex-col dark:bg-black dark:text-white">
+    <div className="w-full h-full  mt-8 flex flex-col dark:bg-black dark:text-white">
       <h1 className="text-2xl font-bold text-red-300 self-center">
         Welcome in your save
       </h1>

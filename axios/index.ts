@@ -1,73 +1,36 @@
 "use client";
 
-import {
-  getCookie,
-  getRefreshCookie,
-  setCookie,
-  setRefreshCookie,
-} from "@/utils/cookie";
-import * as jwt from "jwt-decode";
+import { getCookie, setCookie } from "@/utils/cookie";
 import axios from "axios";
 
 export const http = axios.create({
   baseURL: "http://localhost:8001",
 });
 
-const HEADER_NAME = "auth";
-
 http.interceptors.request.use((config) => {
-  const Token = getCookie("MyToken");
+  const token = getCookie("MyToken");
+  const refreshToken = getCookie("MyRefreshToken");
 
-  return {
-    ...config,
-    headers: {
-      [HEADER_NAME]: Token,
-    },
-  } as any;
+  token && config.headers.setAuthorization(token);
+  refreshToken && refreshToken && config.headers.set("ref", refreshToken);
+
+  return config;
 });
 
-http.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-
-    console.log("orginerror", { originalRequest });
-
-    if (error.response.status === 401 && !originalRequest._retry) {
-      // originalRequest._retry = true;
-
-      try {
-        const refreshToken = getRefreshCookie("MyRefreshToken");
-
-        // setCookie("MyToken", refreshToken as string);
-
-        const decode = jwt.jwtDecode(refreshToken as string);
-        const id: number = decode.id as number;
-
-        const response = await http.post(
-          "/auth/re/ref",
-          {
-            id,
-          }
-          // { auth: refreshToken as string }
-        );
-        console.log("responde", response);
-        const data = response.data;
-        setCookie("MyToken", data.accessToken);
-        setRefreshCookie("MyRefreshToken", data.refreshToken);
-
-        // localStorage.setItem("token", token);
-
-        // Retry the original request with the new token
-        // originalRequest.headers.Authorization = `Bearer ${token}`;
-        // return axios(originalRequest);
-      } catch (error) {
-        // Handle refresh token error or redirect to login
-      }
-    }
-
-    return Promise.reject(error);
+http.interceptors.response.use((response) => {
+  if (response.headers.get && response.headers.get instanceof Function) {
+    const token = response.headers.get("new_token");
   }
-);
+
+  if (response.headers["new_token"]) {
+    setCookie("MyToken", response.headers["new_token"]);
+  }
+
+  if (response.headers["new_refresh_token"]) {
+    setCookie("MyRefreshToken", response.headers["new_refresh_token"]);
+  }
+
+  return response;
+});
 
 export {};

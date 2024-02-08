@@ -38,12 +38,13 @@ export default function AllMyCars() {
 
   return (
     <div>
-      <div className="flex mt-6  ml-10">
+      <div className="flex  ml-10">
         <h1 className="text-2xl text-center font-bold text-red-500">
           welcome in your all cars
         </h1>
       </div>
       <div className="home__cars-wrapper">
+        {data?.data.cars.length === 0 && <h1>you dona have any </h1>}
         {data?.data?.cars.map((item) => {
           return <CarCard car={item} key={item.id} deleteCar={deleteCar} />;
         })}

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 const TablePage = () => {
   return (
-    <div className="flex items-start dark:bg-black dark:text-white w-full overflow-y-auto overflow-x-auto sm:overflow-x-none ">
+    <div className="flex items-start mt-6 dark:bg-black dark:text-white w-full overflow-y-auto overflow-x-auto sm:overflow-x-none ">
       <AllMyCars />
     </div>
   );

@@ -23,17 +23,13 @@ const CardDetails: FC<IPropsCardDetails> = ({ open, closeModal, car }) => {
   };
 
   return (
-    <div className="fixed w-full flex items-center justify-center h-full bg-yellow-600 z-40 inset-0 bg-opacity-25 ">
-      <div className="w-[550px] shadow-xl transition-all ease-in-out duration-100 h-[550px] flex items-start flex-col p-2 dark:bg-black dark:text-white  overflow-y-auto bg-white rounded-md">
+    <div className="fixed top-10 sm:top-20 mt-2 w-full flex items-center justify-center h-full bg-black z-40 inset-0 bg-opacity-25 ">
+      <div className="w-[550px] shadow-xl transition-all ease-in-out duration-100 mb-16 h-fit flex items-start flex-col p-2 dark:bg-black dark:text-white  overflow-y-auto bg-white rounded-md">
         <div className="self-end p-3 cursor-pointer" onClick={onChangeOpen}>
           X
         </div>
-        <div className="relative w-full bg-center bg-cover bg-pattern h-40 rounded-lg">
-          <img
-            src={car.img}
-            alt="hero"
-            className="object-contain w-[100%] h-full"
-          />
+        <div className="relative w-full bg-center bg-cover bg-pattern h-[100px] rounded-lg">
+          <img src={car.img} alt="hero" className="object-contain w-[100%]" />
         </div>
         <div className="flex flex-col mt-3 w-full">
           <div className="flex justify-between w-full mt-3 border-b-gray-400">

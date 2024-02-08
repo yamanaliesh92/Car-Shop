@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function InfoPage() {
   return (
-    <div className="w-full  flex flex-col sm:items-center sm:justify-center">
+    <div className="w-full mt-6  flex flex-col sm:items-center sm:justify-center">
       <Info />
     </div>
   );
